@@ -11,6 +11,7 @@ from flask import request
 from flask import url_for
 from psycopg.rows import namedtuple_row
 from psycopg_pool import ConnectionPool
+from math import ceil
 
 
 # postgres://{user}:{password}@{hostname}:{port}/{database-name}
@@ -41,101 +42,90 @@ dictConfig(
 app = Flask(__name__)
 log = app.logger
 
+@app.route('/', methods=('GET',))
+def index():
+    return render_template('base.html')
 
-@app.route("/", methods=("GET",))
-@app.route("/accounts", methods=("GET",))
-def account_index():
-    """Show all the accounts, most recent first."""
+@app.route('/products', methods=('GET',))
+def products_index():
+    DEFAULT_AMMOUNT = 10
+
+    if request.args.get('p') is None:
+        return redirect(url_for('products_index', p=1))
+
+    p = eval(request.args.get('p'))
+
+    if p < 1:
+        return redirect(url_for('products_index', p=1))
 
     with pool.connection() as conn:
         with conn.cursor(row_factory=namedtuple_row) as cur:
-            accounts = cur.execute(
+            count = cur.execute(
                 """
-                SELECT account_number, branch_name, balance
-                FROM account
-                ORDER BY account_number DESC;
+                SELECT COUNT(*) FROM product;
+                """
+            ).fetchone()[0]
+            
+            if DEFAULT_AMMOUNT*(p-1) >= count:
+                return redirect(url_for('products_index', p=ceil(count/DEFAULT_AMMOUNT)))
+
+            products = cur.execute(
+                """
+                    SELECT * FROM product LIMIT %(limit)s OFFSET %(page)s;
                 """,
-                {},
+                { "page": DEFAULT_AMMOUNT*(p-1), "limit": DEFAULT_AMMOUNT }
             ).fetchall()
-            log.debug(f"Found {cur.rowcount} rows.")
+    return render_template('products/index.html', products=products, p=p, last_p=ceil(count/DEFAULT_AMMOUNT));
 
-    # API-like response is returned to clients that request JSON explicitly (e.g., fetch)
-    if (
-        request.accept_mimetypes["application/json"]
-        and not request.accept_mimetypes["text/html"]
-    ):
-        return jsonify(accounts)
-
-    return render_template("account/index.html", accounts=accounts)
-
-
-@app.route("/accounts/<account_number>/update", methods=("GET", "POST"))
-def account_update(account_number):
-    """Update the account balance."""
-
-    with pool.connection() as conn:
-        with conn.cursor(row_factory=namedtuple_row) as cur:
-            account = cur.execute(
-                """
-                SELECT account_number, branch_name, balance
-                FROM account
-                WHERE account_number = %(account_number)s;
-                """,
-                {"account_number": account_number},
-            ).fetchone()
-            log.debug(f"Found {cur.rowcount} rows.")
-
+@app.route('/products/new', methods=('GET', 'POST'))
+def products_new():
+    if request.method == "GET":
+        return render_template('products/new.html')
+    
     if request.method == "POST":
-        balance = request.form["balance"]
+        if len(request.form["description"]) == 0:
+            return "ERROR"
+        
+        if len(request.form["name"]) == 0 or len(request.form["name"]) > 200:
+            return "ERROR"
 
-        error = None
+        if len(request.form["sku"]) == 0 or len(request.form["sku"]) > 25:
+            return "ERROR"
+        
+        if len(request.form["ean"]) > 13:
+            return "ERROR"
+        
+        if not request.form["price"].isnumeric():
+            return "ERROR"
+        
+        with pool.connection() as conn:
+            with conn.cursor(row_factory=namedtuple_row) as cur:
 
-        if not balance:
-            error = "Balance is required."
-            if not balance.isnumeric():
-                error = "Balance is required to be numeric."
-
-        if error is not None:
-            flash(error)
-        else:
-            with pool.connection() as conn:
-                with conn.cursor(row_factory=namedtuple_row) as cur:
+                if len(request.form["ean"]) == 0:
                     cur.execute(
                         """
-                        UPDATE account
-                        SET balance = %(balance)s
-                        WHERE account_number = %(account_number)s;
+                            INSERT INTO product VALUES(%(sku)s, %(name)s, %(description)s, %(price)s);
                         """,
-                        {"account_number": account_number, "balance": balance},
+                        request.form
                     )
-                conn.commit()
-            return redirect(url_for("account_index"))
+                else:
+                    cur.execute(
+                        """
+                            INSERT INTO product VALUES(%(sku)s, %(name)s, %(description)s, %(price)s, %(ean)s);
+                        """,
+                        request.form
+                    )
 
-    return render_template("account/update.html", account=account)
+                return redirect(url_for('products_index'))
+        
 
+@app.route('/products/edit/<sku>')
+def products_edit(sku):
+    pass
 
-@app.route("/accounts/<account_number>/delete", methods=("POST",))
-def account_delete(account_number):
-    """Delete the account."""
-
-    with pool.connection() as conn:
-        with conn.cursor(row_factory=namedtuple_row) as cur:
-            cur.execute(
-                """
-                DELETE FROM account
-                WHERE account_number = %(account_number)s;
-                """,
-                {"account_number": account_number},
-            )
-        conn.commit()
-    return redirect(url_for("account_index"))
-
-
-@app.route("/ping", methods=("GET",))
-def ping():
-    log.debug("ping!")
-    return jsonify({"message": "pong!", "status": "success"})
-
+@app.route('/products/delete/<sku>')
+def products_delete(sku):
+    pass
 
 if __name__ == "__main__":
     app.run()
