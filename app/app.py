@@ -103,7 +103,7 @@ def products_new():
             or len(request.form["sku"]) == 0
             or len(request.form["sku"]) > 25
             or len(request.form["ean"]) > 13
-            or not request.form["price"].isnumeric()
+            or not request.form["price"].replace(".", "", 1).isnumeric()
         ):
             flash("There was an error adding the product. Please try again later.")
             return redirect(url_for("products_index"))
@@ -135,9 +135,51 @@ def products_new():
                 return redirect(url_for("products_index"))
 
 
-@app.route("/products/edit/<sku>")
+@app.route("/products/<sku>", methods=("GET", "POST"))
 def products_edit(sku):
-    pass
+    with pool.connection() as conn:
+        with conn.cursor(row_factory=namedtuple_row) as cur:
+            product = cur.execute(
+                """
+                        SELECT * FROM product WHERE sku = %s
+                    """,
+                (sku,),
+            ).fetchone()
+
+            if product is None:
+                flash("Product unavaillable.")
+                return redirect(url_for("products_index"))
+
+    if request.method == "GET":
+        return render_template("products/edit.html", product=product)
+
+    if request.method == "POST":
+        if (
+            len(request.form["description"]) == 0
+            or not request.form["price"].replace(".", "", 1).isnumeric()
+        ):
+            flash("There was an error editing the product. Please try again later.")
+            return redirect(url_for("products_index"))
+
+        with pool.connection() as conn:
+            with conn.cursor(row_factory=namedtuple_row) as cur:
+                try:
+                    cur.execute(
+                        """
+                        UPDATE product SET description = %(description)s, price = %(price)s WHERE sku = %(sku)s;
+                        """,
+                        {
+                            "description": request.form["description"],
+                            "price": request.form["price"],
+                            "sku": sku,
+                        },
+                    )
+                except:
+                    flash(
+                        "There was an error editing the product. Please try again later."
+                    )
+
+        return redirect(url_for("products_index"))
 
 
 @app.route("/products/delete/<sku>")
