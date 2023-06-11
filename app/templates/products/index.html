@@ -1,26 +1,31 @@
-{% extends 'paged.html' %} {% block title %}Products{%endblock %} {% block
-header %}
-<div">
-  <h1>Products</h1>
-  <h3><a href="{{ url_for('products_new')}}">New</a></h3>
-</div>
-{% endblock %} {% block list %} {% for product in products %}
-<article class="post">
-  <header>
-    <div>
-      <h1>{{ product ['name'] }}</h1>
-      <div class="about">
-        SKU: {{ product['sku'] }} {% if product['ean'] is not none %}| EAN:
-        {{product['ean']}} {% endif %}
+{% extends 'paged.html' %}
+{% block title %}Products{% endblock %} 
+{% block header %}
+  <div">
+    <h1>Products</h1>
+    <h3><a href="{{ url_for('products_new')}}">New</a></h3>
+  </div>
+{% endblock %}
+{% block list %} 
+{% for product in products %}
+  <article class="post">
+    <header>
+      <div>
+        <h1>{{ product ['name'] }}</h1>
+        <div class="about">
+          SKU: {{ product['sku'] }} {% if product['ean'] is not none %}| EAN:
+          {{product['ean']}} {% endif %}
+        </div>
       </div>
-    </div>
-    <a class="action" href="{{ url_for('products_edit', sku=product['sku'])}}"
-      >Edit</a
-    >
-  </header>
-  <p class="body"><b>€ {{ product['price'] }}</b></p>
-  <p class="body">{{ product['description'] }}</p>
-</article>
+      <a class="action" href="{{ url_for('products_edit', sku=product['sku'])}}"
+        >Edit</a
+      >
+    </header>
+    <p class="body"><b>€ {{ product['price'] }}</b></p>
+    <p class="body">{{ product['description'] }}</p>
+  </article>
 {% if not loop.last %}
 <hr />
-{% endif %} {% endfor %} {% endblock %}
+{% endif %}
+{% endfor %}
+{% endblock %}
