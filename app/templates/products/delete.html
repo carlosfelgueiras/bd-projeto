@@ -1,0 +1,41 @@
+{% extends 'base.html' %} {% block header %}
+<h1>
+    {% block title %}Product | Delete{% endblock %}
+</h1>
+{% endblock %} {% block content %}
+<form method="post">
+    <label for="sku">Do you wish to delete the product with the following SKU:</label>
+    <input name="sku" id="sku" type="text" value="{{ product['sku'] }}" disabled />
+    <br/>
+    
+    {% if orders|length %}
+    <label>By deleting this product, you will remove it's presence in the following orders:</label>
+    
+    <ul>
+        {% for order in orders %}
+        <li>Order no. {{ order['order_no'] }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    
+    <br/>
+    
+    {% if suppliers|length %}
+    <label>By deleting this product, you will also delete the following suppliers and their deliveries on warehouses:</label>
+    
+    <ul>
+        {% for supplier in suppliers %}
+        <li>{{ supplier['tin'] }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <br/>
+
+  <input class="danger" type="submit" value="Delete"/>
+</form>
+
+<form method="get" action="{{ url_for('products_index') }}">
+    <input type="submit" value="Cancel"/>
+</form>
+{% endblock %}

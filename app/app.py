@@ -182,9 +182,74 @@ def products_edit(sku):
         return redirect(url_for("products_index"))
 
 
-@app.route("/products/delete/<sku>")
+@app.route("/products/delete/<sku>", methods=("GET", "POST"))
 def products_delete(sku):
-    pass
+    with pool.connection() as conn:
+        with conn.cursor(row_factory=namedtuple_row) as cur:
+            product = cur.execute(
+                """
+                    SELECT * FROM product WHERE sku = %s;
+                """,
+                (sku,),
+            ).fetchone()
+
+            orders = cur.execute(
+                """
+                    SELECT order_no FROM contains WHERE sku = %s
+                """,
+                (sku,),
+            ).fetchall()
+
+            suppliers = cur.execute(
+                """
+                    SELECT tin FROM supplier WHERE sku = %s;
+                """,
+                (sku,),
+            ).fetchall()
+
+            if product is None:
+                flash("Product unavaillable.")
+                return redirect(url_for("products_index"))
+
+    if request.method == "GET":
+        return render_template(
+            "products/delete.html", product=product, orders=orders, suppliers=suppliers
+        )
+
+    if request.method == "POST":
+        with pool.connection() as conn:
+            with conn.cursor(row_factory=namedtuple_row) as cur:
+                cur.execute(
+                    """
+                        DELETE FROM contains WHERE sku = %s;
+                    """,
+                    (sku,),
+                )
+
+                for supplier in suppliers:
+                    cur.execute(
+                        """
+                            DELETE FROM delivery WHERE tin = %s;
+                        """,
+                        (supplier[0],),
+                    )
+
+                cur.execute(
+                    """
+                        DELETE FROM supplier WHERE sku = %s;
+                    """,
+                    (sku,),
+                )
+
+                cur.execute(
+                    """
+                        DELETE FROM product WHERE sku = %s;
+                    """,
+                    (sku,),
+                )
+
+        flash(f"Product {sku} deleted successfully.")
+        return redirect(url_for("products_index"))
 
 
 if __name__ == "__main__":
