@@ -10,24 +10,65 @@
     
     {% if orders|length %}
     <label>By deleting this product, you will remove it's presence in the following orders:</label>
-    
-    <ul>
+    <table>
+        <tr>
+            <th>Order No.</th>
+            <th>Date No.</th>
+            <th>Customer No.</th>
+            <th>Customer Name</th>
+        </tr>
+
         {% for order in orders %}
-        <li>Order no. {{ order['order_no'] }}</li>
+        <tr>
+            <td>{{ order['order_no'] }}</td>
+            <td>{{ order['date'] }}</td>
+            <td>{{ order['cust_no'] }}</td>
+            <td>{{ order['name'] }}</td>
+        </tr>
         {% endfor %}
-    </ul>
+    </table>
     {% endif %}
     
     <br/>
     
     {% if suppliers|length %}
-    <label>By deleting this product, you will also delete the following suppliers and their deliveries on warehouses:</label>
-    
-    <ul>
+    <label>By deleting this product, you will also delete the following suppliers:</label>
+    <table>
+        <tr>
+            <th>TIN</th>
+            <th>Address</th>
+            <th>Name</th>
+        </tr>
+
         {% for supplier in suppliers %}
-        <li>{{ supplier['tin'] }}</li>
+        <tr>
+            <th>{{ supplier['tin'] }}</th>
+            <th>{{ supplier['address'] }}</th>
+            <th>{{ supplier['name'] }}</th>
+        </tr>
         {% endfor %}
-    </ul>
+
+    </table>
+    {% endif %}
+
+    <br/>
+
+    {% if deliveries|length %}
+    <label>By deleting this product, you will also delete the following delivery records:</label>
+    <table>
+        <tr>
+            <th>TIN</th>
+            <th>Address</th>
+        </tr>
+
+        {% for delivery in deliveries %}
+        <tr>
+            <th>{{ delivery['tin'] }}</th>
+            <th>{{ delivery['address'] }}</th>
+        </tr>
+        {% endfor %}
+
+    </table>
     {% endif %}
 
     <br/>

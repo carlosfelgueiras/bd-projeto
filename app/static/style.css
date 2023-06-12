@@ -161,3 +161,17 @@ input[type="submit"] {
   align-self: start;
   min-width: 10em;
 }
+
+table {
+  border-collapse: collapse;
+}
+
+th,
+td {
+  border: 1px solid black;
+  padding: 8px;
+}
+
+thead th {
+  width: 25%;
+}

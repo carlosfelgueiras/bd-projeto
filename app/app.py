@@ -223,14 +223,42 @@ def products_delete(sku):
 
                 orders = cur.execute(
                     """
-                        SELECT order_no FROM contains WHERE sku = %s
+                        SELECT DISTINCT
+                            order_no,
+                            date,
+                            cust_no,
+                            c.name
+                        FROM 
+                            contains
+                        NATURAL JOIN
+                            orders
+                        INNER JOIN
+                            customer c
+                        USING (cust_no)
+                        WHERE 
+                            sku = %s;
                     """,
                     (sku,),
                 ).fetchall()
 
                 suppliers = cur.execute(
                     """
-                        SELECT tin FROM supplier WHERE sku = %s;
+                        SELECT DISTINCT tin, address, name FROM supplier WHERE sku = %s;
+                    """,
+                    (sku,),
+                ).fetchall()
+
+                deliveries = cur.execute(
+                    """
+                        SELECT
+                            tin,
+                            d.address
+                        FROM
+                            delivery d
+                        INNER JOIN 
+                            supplier USING (TIN)
+                        WHERE
+                            sku = %s; 
                     """,
                     (sku,),
                 ).fetchall()
@@ -243,7 +271,11 @@ def products_delete(sku):
 
     if request.method == "GET":
         return render_template(
-            "products/delete.html", product=product, orders=orders, suppliers=suppliers
+            "products/delete.html",
+            product=product,
+            orders=orders,
+            suppliers=suppliers,
+            deliveries=deliveries,
         )
 
     if request.method == "POST":
