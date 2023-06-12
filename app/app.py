@@ -64,23 +64,28 @@ def products_index():
 
     with pool.connection() as conn:
         with conn.cursor(row_factory=namedtuple_row) as cur:
-            count = cur.execute(
-                """
-                SELECT COUNT(*) FROM product;
-                """
-            ).fetchone()[0]
+            try:
+                count = cur.execute(
+                    """
+                    SELECT COUNT(*) FROM product;
+                    """
+                ).fetchone()[0]
 
-            if DEFAULT_AMMOUNT * (p - 1) >= count:
-                return redirect(
-                    url_for("products_index", p=ceil(count / DEFAULT_AMMOUNT))
-                )
+                if DEFAULT_AMMOUNT * (p - 1) >= count:
+                    return redirect(
+                        url_for("products_index", p=ceil(count / DEFAULT_AMMOUNT))
+                    )
 
-            products = cur.execute(
-                """
-                    SELECT * FROM product LIMIT %(limit)s OFFSET %(page)s;
-                """,
-                {"page": DEFAULT_AMMOUNT * (p - 1), "limit": DEFAULT_AMMOUNT},
-            ).fetchall()
+                products = cur.execute(
+                    """
+                        SELECT * FROM product LIMIT %(limit)s OFFSET %(page)s;
+                    """,
+                    {"page": DEFAULT_AMMOUNT * (p - 1), "limit": DEFAULT_AMMOUNT},
+                ).fetchall()
+            except:
+                flash("There was an error adding the product. Please try again later.")
+                return redirect(url_for("products_index"))
+
     return render_template(
         "products/index.html",
         products=products,
@@ -139,15 +144,19 @@ def products_new():
 def products_edit(sku):
     with pool.connection() as conn:
         with conn.cursor(row_factory=namedtuple_row) as cur:
-            product = cur.execute(
-                """
-                        SELECT * FROM product WHERE sku = %s
-                    """,
-                (sku,),
-            ).fetchone()
+            try:
+                product = cur.execute(
+                    """
+                            SELECT * FROM product WHERE sku = %s
+                        """,
+                    (sku,),
+                ).fetchone()
 
-            if product is None:
-                flash("Product unavaillable.")
+                if product is None:
+                    flash("Product unavaillable.")
+                    return redirect(url_for("products_index"))
+            except:
+                flash("There was an error adding the product. Please try again later.")
                 return redirect(url_for("products_index"))
 
     if request.method == "GET":
@@ -186,29 +195,33 @@ def products_edit(sku):
 def products_delete(sku):
     with pool.connection() as conn:
         with conn.cursor(row_factory=namedtuple_row) as cur:
-            product = cur.execute(
-                """
-                    SELECT * FROM product WHERE sku = %s;
-                """,
-                (sku,),
-            ).fetchone()
+            try:
+                product = cur.execute(
+                    """
+                        SELECT * FROM product WHERE sku = %s;
+                    """,
+                    (sku,),
+                ).fetchone()
 
-            orders = cur.execute(
-                """
-                    SELECT order_no FROM contains WHERE sku = %s
-                """,
-                (sku,),
-            ).fetchall()
+                if product is None:
+                    flash("Product unavaillable.")
+                    return redirect(url_for("products_index"))
 
-            suppliers = cur.execute(
-                """
-                    SELECT tin FROM supplier WHERE sku = %s;
-                """,
-                (sku,),
-            ).fetchall()
+                orders = cur.execute(
+                    """
+                        SELECT order_no FROM contains WHERE sku = %s
+                    """,
+                    (sku,),
+                ).fetchall()
 
-            if product is None:
-                flash("Product unavaillable.")
+                suppliers = cur.execute(
+                    """
+                        SELECT tin FROM supplier WHERE sku = %s;
+                    """,
+                    (sku,),
+                ).fetchall()
+            except:
+                flash("There was an error adding the product. Please try again later.")
                 return redirect(url_for("products_index"))
 
     if request.method == "GET":
@@ -219,34 +232,40 @@ def products_delete(sku):
     if request.method == "POST":
         with pool.connection() as conn:
             with conn.cursor(row_factory=namedtuple_row) as cur:
-                cur.execute(
-                    """
-                        DELETE FROM contains WHERE sku = %s;
-                    """,
-                    (sku,),
-                )
-
-                for supplier in suppliers:
+                try:
                     cur.execute(
                         """
-                            DELETE FROM delivery WHERE tin = %s;
+                            DELETE FROM contains WHERE sku = %s;
                         """,
-                        (supplier[0],),
+                        (sku,),
                     )
 
-                cur.execute(
-                    """
-                        DELETE FROM supplier WHERE sku = %s;
-                    """,
-                    (sku,),
-                )
+                    for supplier in suppliers:
+                        cur.execute(
+                            """
+                                DELETE FROM delivery WHERE tin = %s;
+                            """,
+                            (supplier[0],),
+                        )
 
-                cur.execute(
-                    """
-                        DELETE FROM product WHERE sku = %s;
-                    """,
-                    (sku,),
-                )
+                    cur.execute(
+                        """
+                            DELETE FROM supplier WHERE sku = %s;
+                        """,
+                        (sku,),
+                    )
+
+                    cur.execute(
+                        """
+                            DELETE FROM product WHERE sku = %s;
+                        """,
+                        (sku,),
+                    )
+                except:
+                    flash(
+                        "There was an error adding the product. Please try again later."
+                    )
+                    return redirect(url_for("products_index"))
 
         flash(f"Product {sku} deleted successfully.")
         return redirect(url_for("products_index"))
