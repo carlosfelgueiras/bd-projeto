@@ -1,0 +1,30 @@
+{% extends 'paged.html' %}
+{% block title %}Suppliers{% endblock %} 
+{% block header %}
+  <div">
+    <h1>Suppliers</h1>
+    <h3><a href="{{ url_for('suppliers_new')}}">New</a></h3>
+  </div>
+{% endblock %}
+{% block list %} 
+{% for supplier in suppliers %}
+  <article class="post">
+    <header>
+      <div>
+        <h1>{{ supplier ['name'] }}</h1>
+        <div class="about">
+          TIN: {{ supplier['tin'] }} | SKU: {{supplier['sku']}}
+        </div>
+      </div>
+      <a class="action" href="{{ url_for('suppliers_delete', tin=supplier['tin'])}}">
+        Remove
+      </a>
+    </header>
+    <p class="body">{{ supplier['address'] }}</p>
+    <p class="body"><b>Ends on:</b> {{ supplier['date'] }}</p>
+  </article>
+{% if not loop.last %}
+<hr />
+{% endif %}
+{% endfor %}
+{% endblock %}
