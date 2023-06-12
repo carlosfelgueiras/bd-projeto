@@ -398,7 +398,7 @@ def suppliers_new():
                 supplier_add['name']=request.form['name']
             
             if(len(request.form['address'])!=0):
-                supplier_add['address']=request.form['addres']
+                supplier_add['address']=request.form['address']
             
             if(len(request.form['date'])!=0):
                 supplier_add['date']=request.form['date']
