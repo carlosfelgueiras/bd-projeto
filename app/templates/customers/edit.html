@@ -1,0 +1,23 @@
+{% extends 'base.html' %} {% block header %}
+<h1>
+  {% block title %}Product | Edit{% endblock %}
+</h1>
+{% endblock %} {% block content %}
+<form method="post">
+  <label for="sku">SKU</label>
+  <input name="sku" id="sku" type="text" value="{{ product['sku'] }}" disabled />
+  <label for="name">Name</label>
+  <input name="name" id="name" type="text" value="{{ product['name'] }}" disabled />
+  <label for="description">Description*</label>
+  <textarea name="description" id="description" rows="4" required>{{ product['description'] }}</textarea>
+  <label for="price">Price*</label>
+  <input name="price" id="price" type="number" value="{{ product['price'] }}" min="0" max="9999999999.99" step="0.01" placeholder="0.00" value="" required/>
+  
+  {% if product['ean'] is not none %}
+  <label for="ean">EAN</label>
+  <input name="ean" id="ean" type="text" value="{{ product['ean'] }}" disabled/>
+  {% endif %}
+
+  <input type="submit" value="Edit"/>
+</form>
+{% endblock %}

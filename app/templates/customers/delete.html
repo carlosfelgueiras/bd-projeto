@@ -1,0 +1,36 @@
+{% extends 'base.html' %} {% block header %}
+<h1>
+    {% block title %}Customer | Delete{% endblock %}
+</h1>
+{% endblock %} {% block content %}
+<form method="post">
+    <label for="cust_no">Do you wish to delete the following customer:</label>
+    <input name="cust_no" id="cust_no" type="text" value="{{ customer['cust_no'] }}" disabled />
+    <br/>
+    
+    {% if orders|length %}
+    <label>By deleting this customer, you will the delete the following orders:</label>
+    <table>
+        <tr>
+            <th>Order No.</th>
+            <th>Date No.</th>
+        </tr>
+
+        {% for order in orders %}
+        <tr>
+            <td>{{ order['order_no'] }}</td>
+            <td>{{ order['date'] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+    
+    <br/>
+
+  <input class="danger" type="submit" value="Delete"/>
+</form>
+
+<form method="get" action="{{ url_for('customers_index') }}">
+    <input type="submit" value="Cancel"/>
+</form>
+{% endblock %}
