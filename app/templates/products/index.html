@@ -1,13 +1,13 @@
 {% extends 'paged.html' %}
-{% block title %}Products{% endblock %} 
+{% block title %}Products{% endblock %}
 {% block header %}
-  <div">
-    <h1>Products</h1>
-    <h3><a href="{{ url_for('products_new')}}">New</a></h3>
-  </div>
-{% endblock %}
-{% block list %} 
-{% for product in products %}
+<div style = "clear:both; width: 100%">
+  <h1 style="float: left">Products</h1>
+  <h3 style="float: right"><a href="{{ url_for('products_new')}}">New</a></h3>
+</div>
+  {% endblock %}
+  {% block list %}
+  {% for product in products %}
   <article class="post">
     <header>
       <div>
@@ -27,8 +27,8 @@
     <p class="body"><b>€ {{ product['price'] }}</b></p>
     <p class="body">{{ product['description'] }}</p>
   </article>
-{% if not loop.last %}
-<hr />
-{% endif %}
-{% endfor %}
-{% endblock %}
+  {% if not loop.last %}
+  <hr />
+  {% endif %}
+  {% endfor %}
+  {% endblock %}
