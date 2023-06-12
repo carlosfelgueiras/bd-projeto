@@ -73,10 +73,9 @@
 
     <br/>
 
-  <input class="danger" type="submit" value="Delete"/>
-</form>
-
-<form method="get" action="{{ url_for('products_index') }}">
-    <input type="submit" value="Cancel"/>
+    <div class="button_holder">
+        <input type="submit" value="Cancel" href="{{ url_for('products_index') }}">
+        <input class="danger" type="submit" value="Delete" style="margin-right:5em"/>
+    </div>
 </form>
 {% endblock %}

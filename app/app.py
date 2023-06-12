@@ -201,7 +201,6 @@ def products_edit(sku):
                         "There was an error editing the product. Please try again later.",
                         "error",
                     )
-
         return redirect(url_for("products_index"))
 
 
