@@ -3,7 +3,7 @@
 {% block header %}
 <div style = "clear:both; width: 100%">
   <h1 style="float: left">Products</h1>
-  <h3 style="float: right"><a href="{{ url_for('products_new')}}">New</a></h3>
+  <h1 style="float: right"><a href="{{ url_for('products_new')}}">New</a></h1>
 </div>
   {% endblock %}
   {% block list %}
@@ -21,7 +21,7 @@
         Edit
       </a>
       <a class="action" href="{{ url_for('products_delete', sku=product['sku'])}}">
-        Remove
+        Delete
       </a>
     </header>
     <p class="body"><b>€ {{ product['price'] }}</b></p>

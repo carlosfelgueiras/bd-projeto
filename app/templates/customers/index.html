@@ -1,10 +1,10 @@
 {% extends 'paged.html' %}
 {% block title %}Customers{% endblock %} 
 {% block header %}
-  <div">
-    <h1>Customers</h1>
-    <h3><a href="{{ url_for('customers_new')}}">New</a></h3>
-  </div>
+<div style = "clear:both; width: 100%">
+  <h1 style="float: left">Customers</h1>
+  <h1 style="float: right"><a href="{{ url_for('customers_new')}}">New</a></h1>
+</div>
 {% endblock %}
 {% block list %} 
 {% for customer in customers %}

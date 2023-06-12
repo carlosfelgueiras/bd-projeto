@@ -28,10 +28,9 @@
 
     <br/>
 
-  <input class="danger" type="submit" value="Delete"/>
-</form>
-
-<form method="get" action="{{ url_for('suppliers_index') }}">
-    <input type="submit" value="Cancel"/>
+    <div class="button_holder">
+        <input type="submit" value="Cancel" formaction="{{ url_for('suppliers_index') }}" formmethod="get" style="margin-right:5em" />
+        <input class="danger" type="submit" value="Delete"/>
+    </div>
 </form>
 {% endblock %}

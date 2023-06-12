@@ -27,9 +27,8 @@
         </tr>
         {% endfor %}
     </table>
-    {% endif %}
-    
     <br/>
+    {% endif %}
     
     {% if suppliers|length %}
     <label>By deleting this product, you will also delete the following suppliers:</label>
@@ -49,9 +48,8 @@
         {% endfor %}
 
     </table>
-    {% endif %}
-
     <br/>
+    {% endif %}
 
     {% if deliveries|length %}
     <label>By deleting this product, you will also delete the following delivery records:</label>
@@ -69,13 +67,12 @@
         {% endfor %}
 
     </table>
+    <br/>
     {% endif %}
 
-    <br/>
-
     <div class="button_holder">
-        <input type="submit" value="Cancel" href="{{ url_for('products_index') }}">
-        <input class="danger" type="submit" value="Delete" style="margin-right:5em"/>
+        <input type="submit" value="Cancel" formaction="{{ url_for('products_index') }}" formmethod="get" style="margin-right:5em" /> 
+        <input class="danger" type="submit" value="Delete"/>
     </div>
 </form>
 {% endblock %}
