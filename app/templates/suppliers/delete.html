@@ -1,0 +1,37 @@
+{% extends 'base.html' %} {% block header %}
+<h1>
+    {% block title %}Supplier | Delete{% endblock %}
+</h1>
+{% endblock %} {% block content %}
+<form method="post">
+    <label for="tin">Do you wish to delete the product with the following SKU:</label>
+    <input name="tin" id="tin" type="text" value="{{ supplier['tin'] }}" disabled />
+    <br/>
+
+    {% if deliveries|length %}
+    <label>By deleting this supplier, you will also delete the following delivery records:</label>
+    <table>
+        <tr>
+            <th>TIN</th>
+            <th>Address</th>
+        </tr>
+
+        {% for delivery in deliveries %}
+        <tr>
+            <th>{{ delivery['tin'] }}</th>
+            <th>{{ delivery['address'] }}</th>
+        </tr>
+        {% endfor %}
+
+    </table>
+    {% endif %}
+
+    <br/>
+
+  <input class="danger" type="submit" value="Delete"/>
+</form>
+
+<form method="get" action="{{ url_for('suppliers_index') }}">
+    <input type="submit" value="Cancel"/>
+</form>
+{% endblock %}
