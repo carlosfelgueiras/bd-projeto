@@ -321,5 +321,200 @@ def products_delete(sku):
         return redirect(url_for("products_index"))
 
 
+@app.route("/customers", methods=("GET",))
+def customers_index():
+    DEFAULT_AMMOUNT = 10
+
+    if request.args.get("p") is None:
+        return redirect(url_for("customers_index", p=1))
+
+    p = eval(request.args.get("p"))
+
+    if p < 1:
+        return redirect(url_for("customers_index", p=1))
+
+    with pool.connection() as conn:
+        with conn.cursor(row_factory=namedtuple_row) as cur:
+            try:
+                count = cur.execute(
+                    """
+                    SELECT COUNT(*) FROM customer;
+                    """
+                ).fetchone()[0]
+
+                if DEFAULT_AMMOUNT * (p - 1) >= count:
+                    return redirect(
+                        url_for("customers_index", p=ceil(count / DEFAULT_AMMOUNT))
+                    )
+
+                customers = cur.execute(
+                    """
+                        SELECT * FROM customer LIMIT %(limit)s OFFSET %(page)s;
+                    """,
+                    {"page": DEFAULT_AMMOUNT * (p - 1), "limit": DEFAULT_AMMOUNT},
+                ).fetchall()
+            except:
+                flash(
+                    "There was an error getting the customers. Please try again later.",
+                    "error",
+                )
+                return redirect(url_for("customers_index"))
+
+    return render_template(
+        "customers/index.html",
+        customers=customers,
+        p=p,
+        last_p=ceil(count / DEFAULT_AMMOUNT),
+    )
+
+
+@app.route("/customers/new", methods=("GET", "POST"))
+def customers_new():
+    if request.method == "GET":
+        return render_template("customers/new.html")
+
+    if request.method == "POST":
+        # These conditions are enforced in the client side
+        if (
+            not request.form["cust_no"].isnumeric()
+            or len(request.form["name"]) == 0
+            or len(request.form["name"]) > 80
+            or len(request.form["email"]) == 0
+            or len(request.form["email"]) > 254
+            or len(request.form["phone"]) > 15
+            or len(request.form["address"]) > 255
+        ):
+            flash(
+                "There was an error adding the product. Please try again later.",
+                "error",
+            )
+            return redirect(url_for("products_index"))
+
+        info = {
+            "cust_no": request.form["cust_no"],
+            "name": request.form["name"],
+            "email": request.form["email"],
+            "phone": None,
+            "address": None,
+        }
+
+        if len(request.form["phone"]) != 0:
+            info["phone"] = request.form["phone"]
+
+        if len(request.form["address"]) != 0:
+            info["address"] = request.form["address"]
+
+        with pool.connection() as conn:
+            with conn.cursor(row_factory=namedtuple_row) as cur:
+                try:
+                    cur.execute(
+                        """
+                            INSERT INTO customer VALUES(%(cust_no)s, %(name)s, %(email)s, %(phone)s, %(address)s);
+                        """,
+                        info,
+                    )
+                except psycopg.errors.UniqueViolation:
+                    flash("A customer with the same number already exists.", "warn")
+                except:
+                    flash(
+                        "There was an error adding the product. Please try again later.",
+                        "error",
+                    )
+
+                return redirect(url_for("customers_index"))
+
+
+@app.route("/customers/delete/<cust_no>", methods=("GET", "POST"))
+def customers_delete(cust_no):
+    with pool.connection() as conn:
+        with conn.cursor(row_factory=namedtuple_row) as cur:
+            try:
+                customer = cur.execute(
+                    """
+                        SELECT * FROM customer WHERE cust_no = %s;
+                    """,
+                    (cust_no,),
+                ).fetchone()
+
+                if customer is None:
+                    flash("Customer unavaillable.", "warn")
+                    return redirect(url_for("customers_index"))
+
+                orders = cur.execute(
+                    """
+                        SELECT DISTINCT
+                            order_no,
+                            date
+                        FROM 
+                            customer
+                        NATURAL JOIN
+                            orders
+                        WHERE 
+                            cust_no = %s;
+                    """,
+                    (cust_no,),
+                ).fetchall()
+            except:
+                flash(
+                    "There was an error deleting the customer. Please try again later.",
+                    "error",
+                )
+                return redirect(url_for("customers_index"))
+
+    if request.method == "GET":
+        return render_template(
+            "customers/delete.html", customer=customer, orders=orders
+        )
+
+    if request.method == "POST":
+        with pool.connection() as conn:
+            with conn.cursor(row_factory=namedtuple_row) as cur:
+                try:
+                    for order in orders:
+                        cur.execute(
+                            """
+                                DELETE FROM contains WHERE order_no = %s;
+                            """,
+                            (order[0],),
+                        )
+
+                        cur.execute(
+                            """
+                                DELETE FROM process WHERE order_no = %s;
+                            """,
+                            (order[0],),
+                        )
+
+                    cur.execute(
+                        """
+                            DELETE FROM pay WHERE cust_no = %s;
+                        """,
+                        (cust_no,),
+                    )
+
+                    cur.execute(
+                        """
+                            DELETE FROM orders WHERE cust_no = %s;
+                        """,
+                        (cust_no,),
+                    )
+
+                    cur.execute(
+                        """
+                            DELETE FROM customer WHERE cust_no = %s;
+                        """,
+                        (cust_no,),
+                    )
+                except:
+                    flash(
+                        "There was an error deleting the customer. Please try again later.",
+                        "error",
+                    )
+                    return redirect(url_for("customers_index"))
+
+        flash(f"Customer {cust_no} deleted successfully.", "info")
+        return redirect(url_for("customers_index"))
+
+
 if __name__ == "__main__":
     app.run()
