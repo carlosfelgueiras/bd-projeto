@@ -177,15 +177,15 @@ thead th {
   width: 25%;
 }
 
-.button_holder{
+.button_holder {
   text-align: center;
-  display: inline-block
+  display: inline-block;
 }
 
 .pagination {
   display: inline-block;
   text-align: center;
-  margin: 5px
+  margin: 5px;
 }
 
 .pagination a {
@@ -224,4 +224,6 @@ thead th {
   border-bottom-right-radius: 5px;
 }
 
-.pagination a:hover:not(.active) {background-color: #ddd;}
+.pagination a:hover:not(.active, .etc) {
+  background-color: #ddd;
+}

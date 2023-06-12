@@ -71,6 +71,11 @@ def products_index():
                     """
                 ).fetchone()[0]
 
+                if count == 0:
+                    return render_template(
+                        "products/index.html", products=[], p=1, last_p=1
+                    )
+
                 if DEFAULT_AMMOUNT * (p - 1) >= count:
                     return redirect(
                         url_for("products_index", p=ceil(count / DEFAULT_AMMOUNT))
@@ -341,6 +346,11 @@ def suppliers_index():
                     """
                 ).fetchone()[0]
 
+                if count == 0:
+                    return render_template(
+                        "suppliers/index.html", suppliers=[], p=1, last_p=1
+                    )
+
                 if DEFAULT_AMMOUNT * (p - 1) >= count:
                     return redirect(
                         url_for("suppliers_index", p=ceil(count / DEFAULT_AMMOUNT))
@@ -518,6 +528,11 @@ def customers_index():
                     SELECT COUNT(*) FROM customer;
                     """
                 ).fetchone()[0]
+
+                if count == 0:
+                    return render_template(
+                        "customers/index.html", customers=[], p=1, last_p=1
+                    )
 
                 if DEFAULT_AMMOUNT * (p - 1) >= count:
                     return redirect(
