@@ -83,7 +83,10 @@ def products_index():
                     {"page": DEFAULT_AMMOUNT * (p - 1), "limit": DEFAULT_AMMOUNT},
                 ).fetchall()
             except:
-                flash("There was an error adding the product. Please try again later.")
+                flash(
+                    "There was an error adding the product. Please try again later.",
+                    "error",
+                )
                 return redirect(url_for("products_index"))
 
     return render_template(
@@ -110,7 +113,10 @@ def products_new():
             or len(request.form["ean"]) > 13
             or not request.form["price"].replace(".", "", 1).isnumeric()
         ):
-            flash("There was an error adding the product. Please try again later.")
+            flash(
+                "There was an error adding the product. Please try again later.",
+                "error",
+            )
             return redirect(url_for("products_index"))
 
         with pool.connection() as conn:
@@ -131,10 +137,11 @@ def products_new():
                             request.form,
                         )
                 except psycopg.errors.UniqueViolation:
-                    flash("A product with the same SKU already exists.")
+                    flash("A product with the same SKU already exists.", "warn")
                 except:
                     flash(
-                        "There was an error adding the product. Please try again later."
+                        "There was an error adding the product. Please try again later.",
+                        "error",
                     )
 
                 return redirect(url_for("products_index"))
@@ -153,10 +160,13 @@ def products_edit(sku):
                 ).fetchone()
 
                 if product is None:
-                    flash("Product unavaillable.")
+                    flash("Product unavaillable.", "warn")
                     return redirect(url_for("products_index"))
             except:
-                flash("There was an error adding the product. Please try again later.")
+                flash(
+                    "There was an error adding the product. Please try again later.",
+                    "error",
+                )
                 return redirect(url_for("products_index"))
 
     if request.method == "GET":
@@ -167,7 +177,10 @@ def products_edit(sku):
             len(request.form["description"]) == 0
             or not request.form["price"].replace(".", "", 1).isnumeric()
         ):
-            flash("There was an error editing the product. Please try again later.")
+            flash(
+                "There was an error editing the product. Please try again later.",
+                "error",
+            )
             return redirect(url_for("products_index"))
 
         with pool.connection() as conn:
@@ -185,7 +198,8 @@ def products_edit(sku):
                     )
                 except:
                     flash(
-                        "There was an error editing the product. Please try again later."
+                        "There was an error editing the product. Please try again later.",
+                        "error",
                     )
 
         return redirect(url_for("products_index"))
@@ -204,7 +218,7 @@ def products_delete(sku):
                 ).fetchone()
 
                 if product is None:
-                    flash("Product unavaillable.")
+                    flash("Product unavaillable.", "warn")
                     return redirect(url_for("products_index"))
 
                 orders = cur.execute(
@@ -221,7 +235,10 @@ def products_delete(sku):
                     (sku,),
                 ).fetchall()
             except:
-                flash("There was an error adding the product. Please try again later.")
+                flash(
+                    "There was an error adding the product. Please try again later.",
+                    "error",
+                )
                 return redirect(url_for("products_index"))
 
     if request.method == "GET":
@@ -263,11 +280,12 @@ def products_delete(sku):
                     )
                 except:
                     flash(
-                        "There was an error adding the product. Please try again later."
+                        "There was an error adding the product. Please try again later.",
+                        "error",
                     )
                     return redirect(url_for("products_index"))
 
-        flash(f"Product {sku} deleted successfully.")
+        flash(f"Product {sku} deleted successfully.", "info")
         return redirect(url_for("products_index"))
 
 
