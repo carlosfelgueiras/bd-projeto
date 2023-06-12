@@ -1,14 +1,23 @@
 {% extends 'base.html' %} {% block title %} {% endblock %} {% block header %}{%
 endblock %} {% block content %}
-<div>
-  {% if p > 2 %}<a href="{{ url_for('products_index', p=1)}}">1</a>...{% endif
-  %}{% if p > 1 %}<a href="{{ url_for('products_index', p=p-1)}}">{{p-1}}</a>{%
-  endif%}
-  <b>{{ p }}</b>
-  {% if p < last_p %}<a href="{{ url_for('products_index', p=p+1)}}">{{p+1}}</a
-  >{% endif %}{% if p < last_p-1 %}...<a
-    href="{{ url_for('products_index', p=last_p)}}"
-    >{{last_p}}</a
-  >{% endif %}
+<div style="text-align:center">
+  <div class="pagination">
+    {% if p > 2 %}
+      <a href="{{ url_for('products_index', p=1)}}">1</a>
+      <a class="etc">...</a>  
+    {% endif%}
+    {% if p > 1 %}
+      <a href="{{ url_for('products_index', p=p-1)}}">{{p-1}}</a>
+    {%endif%}
+      <b>
+      <a class="active">{{p}}</a>
+      </b>
+    {% if p < last_p %}
+      <a href="{{ url_for('products_index', p=p+1)}}">{{p+1}}</a>
+    {% endif %}{% if p < last_p-1 %}
+      <a class="etc">...</a>  
+      <a href="{{ url_for('products_index', p=last_p)}}">{{last_p}}</a>
+    {% endif %}
+  </div>
 </div>
 {% block list %}{% endblock %} {% endblock %}
