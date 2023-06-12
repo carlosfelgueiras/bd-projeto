@@ -320,6 +320,7 @@ def products_delete(sku):
         flash(f"Product {sku} deleted successfully.", "info")
         return redirect(url_for("products_index"))
 
+
 @app.route("/suppliers", methods=("GET",))
 def suppliers_index():
     DEFAULT_AMMOUNT = 10
@@ -366,60 +367,64 @@ def suppliers_index():
         last_p=ceil(count / DEFAULT_AMMOUNT),
     )
 
+
 @app.route("/suppliers/new", methods=("GET", "POST"))
 def suppliers_new():
-        if request.method == "GET":
-            return render_template("suppliers/new.html")
+    if request.method == "GET":
+        return render_template("suppliers/new.html")
 
-        if request.method == "POST":
+    if request.method == "POST":
         # These conditions are enforced in the client side
-            if (
-                len(request.form["tin"]) == 0
-                or len(request.form["tin"]) > 20
-                or len(request.form["name"]) > 200
-                or len(request.form["address"]) > 255
-                or len(request.form["sku"]) == 0
-                or len(request.form["sku"]) > 255
-                #Verify date
-            ):
-                flash(
-                    "There was an error adding the supplier. Please try again later.",
-                    "error",
-                )
-                return redirect(url_for("suppliers_index"))
+        if (
+            len(request.form["tin"]) == 0
+            or len(request.form["tin"]) > 20
+            or len(request.form["name"]) > 200
+            or len(request.form["address"]) > 255
+            or len(request.form["sku"]) == 0
+            or len(request.form["sku"]) > 255
+            # Verify date
+        ):
+            flash(
+                "There was an error adding the supplier. Please try again later.",
+                "error",
+            )
+            return redirect(url_for("suppliers_index"))
 
-            supplier_add={'tin': request.form['tin'], 
-                          'name': None, 
-                          'address': None, 
-                          'sku': request.form['sku'],
-                          'date': None}
+        info = {
+            "tin": request.form["tin"],
+            "name": None,
+            "address": None,
+            "sku": request.form["sku"],
+            "date": None,
+        }
 
-            if(len(request.form['name'])!=0):
-                supplier_add['name']=request.form['name']
-            
-            if(len(request.form['address'])!=0):
-                supplier_add['address']=request.form['address']
-            
-            if(len(request.form['date'])!=0):
-                supplier_add['date']=request.form['date']
+        if len(request.form["name"]) != 0:
+            info["name"] = request.form["name"]
 
-            with pool.connection() as conn:
-                with conn.cursor(row_factory=namedtuple_row) as cur:
-                    try:
-                         cur.execute(
-                            """
+        if len(request.form["address"]) != 0:
+            info["address"] = request.form["address"]
+
+        if len(request.form["date"]) != 0:
+            info["date"] = request.form["date"]
+
+        with pool.connection() as conn:
+            with conn.cursor(row_factory=namedtuple_row) as cur:
+                try:
+                    cur.execute(
+                        """
                                 INSERT INTO supplier VALUES(%(tin)s,%(name)s ,%(address)s , %(sku)s, %(date)s);
                             """,
-                            supplier_add,
-                        )
-                    except psycopg.errors.UniqueViolation:
-                        flash("A supplier with the same TIN already exists.", "warn")
-                    except:
-                        flash(
-                             "There was an error adding the supplier. Please try again later.",
-                            "error",
-                        )
-                return redirect(url_for("suppliers_index"))
+                        info,
+                    )
+                except psycopg.errors.UniqueViolation:
+                    flash("A supplier with the same TIN already exists.", "warn")
+                except:
+                    flash(
+                        "There was an error adding the supplier. Please try again later.",
+                        "error",
+                    )
+            return redirect(url_for("suppliers_index"))
+
 
 @app.route("/suppliers/delete/<tin>", methods=("GET", "POST"))
 def suppliers_delete(tin):
@@ -469,7 +474,6 @@ def suppliers_delete(tin):
         with pool.connection() as conn:
             with conn.cursor(row_factory=namedtuple_row) as cur:
                 try:
-
                     cur.execute(
                         """
                             DELETE FROM delivery WHERE tin = %s;
