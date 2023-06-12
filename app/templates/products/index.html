@@ -20,6 +20,9 @@
       <a class="action" href="{{ url_for('products_edit', sku=product['sku'])}}">
         Edit
       </a>
+      <a class="action" href="{{ url_for('products_delete', sku=product['sku'])}}">
+        Remove
+      </a>
     </header>
     <p class="body"><b>€ {{ product['price'] }}</b></p>
     <p class="body">{{ product['description'] }}</p>
