@@ -16,6 +16,9 @@
           No.: {{ customer['cust_no'] }} | {{ customer['phone'] }} | {{ customer['email'] }}
         </div>
       </div>
+      <a class="action" href="{{ url_for('customers_orders_index', cust_no=customer['cust_no']) }}">
+        View Orders
+      </a>
       <a class="action" href="{{ url_for('customers_delete', cust_no=customer['cust_no']) }}">
         Delete
       </a>

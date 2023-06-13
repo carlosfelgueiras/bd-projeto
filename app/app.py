@@ -13,6 +13,7 @@ from flask import Response
 from psycopg.rows import namedtuple_row
 from psycopg_pool import ConnectionPool
 from math import ceil
+import datetime
 
 
 # postgres://{user}:{password}@{hostname}:{port}/{database-name}
@@ -838,6 +839,167 @@ def orders_pay(order_no):
 
         flash(f"Order {order_no} paid successfully.", "info")
         return redirect(url_for("orders_index"))
+
+
+@app.route("/customers/<cust_no>/orders", methods=("GET",))
+def customers_orders_index(cust_no):
+    DEFAULT_AMMOUNT = 10
+
+    if request.args.get("p") is None:
+        return redirect(url_for("customers_orders_index", p=1, cust_no=cust_no))
+
+    p = eval(request.args.get("p"))
+
+    if p < 1:
+        return redirect(url_for("customers_orders_index", p=1, cust_no=cust_no))
+
+    with pool.connection() as conn:
+        with conn.cursor(row_factory=namedtuple_row) as cur:
+            try:
+                count = cur.execute(
+                    """
+                        SELECT COUNT(*) FROM orders WHERE cust_no = %s;
+                    """,
+                    (cust_no,),
+                ).fetchone()[0]
+
+                if count == 0:
+                    return render_template(
+                        "orders/index.html", customers=[], p=1, last_p=1
+                    )
+
+                if DEFAULT_AMMOUNT * (p - 1) >= count:
+                    return redirect(
+                        url_for("customers_orders_index", p=1, cust_no=cust_no)
+                    )
+
+                orders = cur.execute(
+                    """
+                        SELECT * FROM orders WHERE cust_no = %(cust_no)s LIMIT %(limit)s OFFSET %(page)s;
+                    """,
+                    {
+                        "cust_no": cust_no,
+                        "page": DEFAULT_AMMOUNT * (p - 1),
+                        "limit": DEFAULT_AMMOUNT,
+                    },
+                ).fetchall()
+
+                products = {}
+                sales = []
+                for order in orders:
+                    products[order[0]] = cur.execute(
+                        """
+                            SELECT sku, name, qty FROM orders NATURAL JOIN contains NATURAL JOIN product WHERE order_no = %s;
+                        """,
+                        (order[0],),
+                    ).fetchall()
+
+                    is_sale = cur.execute(
+                        """
+                            SELECT order_no FROM pay WHERE order_no = %s; 
+                        """,
+                        (order[0],),
+                    ).fetchone()
+
+                    if is_sale is not None:
+                        sales.append(order[0])
+            except:
+                flash(
+                    "There was an error getting the orders. Please try again later.",
+                    "error",
+                )
+                return redirect(url_for("index"))
+
+            return render_template(
+                "orders/index.html",
+                orders=orders,
+                products=products,
+                sales=sales,
+                cust_no=cust_no,
+                p=p,
+                last_p=ceil(count / DEFAULT_AMMOUNT),
+            )
+
+
+@app.route("/customers/<cust_no>/orders/new", methods=("GET", "POST"))
+def customers_orders_new(cust_no):
+    with pool.connection() as conn:
+        with conn.cursor(row_factory=namedtuple_row) as cur:
+            try:
+                customer = cur.execute(
+                    """
+                            SELECT * FROM customer WHERE cust_no = %s;
+                        """,
+                    (cust_no,),
+                ).fetchone()
+
+                if customer is None:
+                    flash("Customer unavaillable.", "warn")
+                    return redirect(url_for("customers_index"))
+
+                products = cur.execute(
+                    """
+                            SELECT sku, name, price FROM product;
+                        """
+                ).fetchall()
+            except:
+                flash(
+                    "There was an error adding the order. Please try again later.",
+                    "error",
+                )
+                return redirect(url_for("customers_index"))
+
+    if request.method == "GET":
+        return render_template("orders/new.html", customer=customer, products=products)
+
+    if request.method == "POST":
+        for key in request.form:
+            if len(request.form[key]) == 0 or not request.form[key].isnumeric():
+                flash(
+                    "There was an error adding the order. Please try again later.",
+                    "error",
+                )
+                return redirect(url_for("customers_orders_index", cust_no=cust_no))
+
+        contained_products = {}
+        for product in products:
+            key = "product:" + str(product[0])
+            if key in request.form.keys() and eval(request.form[key]) > 0:
+                contained_products[product[0]] = eval(request.form[key])
+
+        if len(contained_products) == 0:
+            flash(
+                "An order must contain atleast 1 product.",
+                "warn",
+            )
+            return redirect(url_for("customers_orders_index", cust_no=cust_no))
+
+        with pool.connection() as conn:
+            with conn.cursor(row_factory=namedtuple_row) as cur:
+                cur.execute(
+                    """
+                        INSERT INTO orders VALUES(%(order_no)s, %(cust_no)s, %(date)s)
+                    """,
+                    {
+                        "cust_no": cust_no,
+                        "order_no": request.form["order_no"],
+                        "date": datetime.date.today().strftime("%Y-%m-%d"),
+                    },
+                )
+
+                for product in contained_products:
+                    cur.execute(
+                        """
+                            INSERT INTO contains VALUES(%(order_no)s, %(sku)s, %(qty)s)
+                        """,
+                        {
+                            "order_no": request.form["order_no"],
+                            "sku": product,
+                            "qty": contained_products[product],
+                        },
+                    )
+
+        return redirect(url_for("customers_orders_index", cust_no=cust_no))
 
 
 if __name__ == "__main__":
