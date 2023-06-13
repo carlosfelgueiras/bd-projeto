@@ -19,14 +19,16 @@
           No.: {{ customer['cust_no'] }} | {{ customer['phone'] }} | {{ customer['email'] }}
         </div>
       </div>
+      <a class="button orders" href="{{ url_for('customers_orders_index', cust_no=customer['cust_no']) }}">
+        <span class="material-icons-outlined md-20 blue mr5">
+          paid
+          </span>
+        View Orders</a>
       <a class="button delete" href="{{ url_for('customers_delete', cust_no=customer['cust_no']) }}">
         <span class="material-icons-outlined md-20 blue mr5">
           delete
           </span>
         Delete</a>
-      <a class="action" href="{{ url_for('customers_orders_index', cust_no=customer['cust_no']) }}">
-        View Orders
-      </a>
     </header>
     <p class="body">{{ customer['address'] }}</p>
   </article>

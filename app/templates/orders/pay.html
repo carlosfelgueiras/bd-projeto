@@ -1,0 +1,26 @@
+{% extends 'base.html' %} {% block header %}
+<h1>
+    {% block title %}Order | Pay{% endblock %}
+</h1>
+{% endblock %} {% block content %}
+<form method="post">
+    <label for="order_no">Do you wish to pay the following order:</label>
+    <input name="order_no" id="order_no" type="text" value="{{ order['order_no'] }}" disabled />
+    <br/>
+    <label for="cust_no">By the following client:</label>
+    <input name="cust_no" id="cust_no" type="text" value="{{ order['cust_no'] }}" disabled />
+    <br/>
+    <label for="products">Products:</label>
+    <pre id="products">
+        {% for product in products %}
+        {{ product['qty'] }} x [{{ product['sku'] }}] {{ product['name'] }}
+        {% endfor %}
+        <br/>
+        <b>Total:</b> {{ total }}€</p>
+    </pre>
+    <div class="button_holder">
+        <input type="submit" value="Cancel" formaction="{{ url_for('orders_index') }}" formmethod="get" style="margin-right:5em" /> 
+        <input type="submit" value="Pay"/>
+    </div>
+</form>
+{% endblock %}

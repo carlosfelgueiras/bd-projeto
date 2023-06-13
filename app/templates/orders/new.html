@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block header %}
+  <h1>{% block title %}New Order{% endblock %}</h1>
+{% endblock %}
+{% block content %}
+  <form method="post">
+    <label for="cust_no">Customer Number</label>
+    <input name="cust_no" id="cust_no" type="text" value="{{ customer['cust_no'] }}" maxlength="25" disabled />
+    <label for="order_no">Order Number*</label>
+    <input name="order_no" id="order_no" type="number" value="" min="0" required />
+    
+    {% for product in products %}
+    <div>
+        <label for="product:{{ product['sku'] }}">[{{ product['sku'] }}] {{ product['name'] }}</label>
+        <input name="product:{{ product['sku'] }}" id="product:{{ product['sku'] }}" type="number" value="0" min="0" required/>
+    </div>
+    {% endfor %}
+
+
+    <input type="submit" value="Create"/>
+  </form>
+  <hr />
+{% endblock %}

@@ -41,7 +41,7 @@
     </div>
 
     <div class="box box4"
-        onclick="location.href = '{{ url_for('customers_index')}}';">
+        onclick="location.href = '{{ url_for('orders_index')}}';">
         <span class="material-icons-outlined md-80 blue">
             local_shipping
             </span>
@@ -51,8 +51,7 @@
         </div>
     </div>
 
-    <div class="box box5"
-    onclick="location.href = '{{ url_for('index')}}';">
+    <div class="box box5">
         <span class="material-icons-outlined md-80 blue">
             badge
             </span>
@@ -63,13 +62,13 @@
     </div>
 
     <div class="box box6"
-        onclick="location.href = '{{ url_for('customers_index')}}';">
+        onclick="location.href = '{{ url_for('orders_index')}}';">
         <span class="material-icons-outlined md-80 blue">
             paid
             </span>
         <div class="text">
             <h3 class="box-title">{{count_orders_pay}}</h3>
-            <h3 class="box-content">Payed Orders</h3>
+            <h3 class="box-content">Sales</h3>
         </div>
     </div>
 </div>

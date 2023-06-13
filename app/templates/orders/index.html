@@ -1,0 +1,53 @@
+{% extends 'paged.html' %}
+{% block title %}Orders{% if cust_no is defined %} - {{cust_no}} {% endif %}{% endblock %}
+{% block header %}
+<div class="subtitle-bar">
+  <h1 class="subtitle-text">Orders {% if cust_no is defined %} - Customer No. {{cust_no}} {% endif %}</h1>
+  
+  {% if cust_no is defined%}
+  <a class="button new" href="{{ url_for('customers_orders_new', cust_no=cust_no)}}">
+    <span class="material-icons-outlined md-20 blue mr5">
+      add
+      </span>
+    New</a>
+  {% endif %}
+</div>
+  {% endblock %}
+  {% block list %}
+  {% for order in orders %}
+  <article class="post">
+    <header>
+      <div>
+        <h1>Order No. {{ order['order_no'] }}</h1>
+        <div class="about">
+          Customer No.: {{ order['cust_no'] }} | {{ order['date'] }}
+        </div>
+      </div>
+      
+      {% if order['order_no'] in sales %}
+        <div class="button paid">
+        <span class="material-icons-outlined md-20 blue mr5">
+          paid
+          </span>
+        Paid</div>
+      {% else %}
+        <a class="button new" href="{{ url_for('orders_pay', order_no=order['order_no']) }}">
+        <span class="material-icons-outlined md-20 blue mr5">
+          paid
+          </span>
+        Pay</a>
+      {% endif %}
+    </header>
+
+    <p class="body"><b>Products:</b></p>
+    <ul>
+    {% for product in products[order['order_no']] %}
+    <li>{{ product['qty'] }} x [{{ product['sku'] }}] {{ product['name'] }}</li>
+    {% endfor %}
+    </ul>
+  </article>
+  {% if not loop.last %}
+  <hr />
+  {% endif %}
+  {% endfor %}
+  {% endblock %}

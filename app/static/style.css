@@ -15,15 +15,15 @@ h2,
 h3,
 h4,
 h5,
-h6{
-  font-family: 'Roboto', sans-serif;
+h6 {
+  font-family: "Roboto", sans-serif;
   color: #377ba8;
   font-weight: 400;
   margin: 1rem 0;
 }
 
 h1.main-title {
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: "Bebas Neue", sans-serif;
   color: #377ba8;
   font-weight: 600;
   letter-spacing: 3px;
@@ -276,7 +276,7 @@ thead th {
   font-weight: 600;
   letter-spacing: 1px;
 }
- 
+
 .box-title {
   font-size: 30px;
   letter-spacing: 3px;
@@ -286,11 +286,11 @@ thead th {
 .subtitle-bar {
   width: 100%;
   align-items: center;
-  margin: 5px
+  margin: 5px;
 }
 
 .subtitle-text {
-  float:left;
+  float: left;
   align-items: center;
 }
 
@@ -305,12 +305,12 @@ thead th {
   justify-content: space-evenly;
   cursor: pointer;
   transition: transform 0.3s ease-in-out;
-  float:right;
+  float: right;
   text-decoration: none;
-  margin:0.5em;
+  margin: 0.5em;
 }
 
-.button.new{
+.button.new {
   background-color: #e4f0f9;
 }
 
@@ -318,25 +318,48 @@ thead th {
   background-color: #cfe7f9;
 }
 
-.button.edit{
+.button.edit {
   background-color: #e7e7e8;
 }
 
-.button.edit:hover{
+.button.edit:hover {
   background-color: #d6d6ea;
 }
 
-.button.delete{
+.button.delete {
   background-color: #fcc7c7;
 }
 
-.button.delete:hover{
+.button.delete:hover {
   background-color: #f9abab;
+}
+
+.button.orders {
+  width: 100px;
+  background-color: #e7e7e8;
+}
+
+.button.orders:hover {
+  width: 100px;
+  background-color: #d6d6ea;
+}
+
+.button.paid {
+  background-color: #c4c1c1;
+  cursor: default;
 }
 
 /* CUSTOMIZING MATERIAL ICONS */
 
-.material-icons-outlined.md-80 { font-size: 80px;}
-.material-icons-outlined.md-20 { font-size: 20px; }
-.material-icons-outlined.blue { color:#377ba8}
-.material-icons-outlined.mr5  {margin-right: 5px;}
+.material-icons-outlined.md-80 {
+  font-size: 80px;
+}
+.material-icons-outlined.md-20 {
+  font-size: 20px;
+}
+.material-icons-outlined.blue {
+  color: #377ba8;
+}
+.material-icons-outlined.mr5 {
+  margin-right: 5px;
+}
