@@ -92,7 +92,7 @@ def products_index():
                     "There was an error adding the product. Please try again later.",
                     "error",
                 )
-                return redirect(url_for("products_index"))
+                return redirect(url_for("index"))
 
     return render_template(
         "products/index.html",
@@ -367,7 +367,7 @@ def suppliers_index():
                     "There was an error getting the suppliers. Please try again later.",
                     "error",
                 )
-                return redirect(url_for("suppliers_index"))
+                return redirect(url_for("index"))
 
     return render_template(
         "suppliers/index.html",
@@ -550,7 +550,7 @@ def customers_index():
                     "There was an error getting the customers. Please try again later.",
                     "error",
                 )
-                return redirect(url_for("customers_index"))
+                return redirect(url_for("index"))
 
     return render_template(
         "customers/index.html",
@@ -706,6 +706,138 @@ def customers_delete(cust_no):
 
         flash(f"Customer {cust_no} deleted successfully.", "info")
         return redirect(url_for("customers_index"))
+
+
+@app.route("/orders", methods=("GET",))
+def orders_index():
+    DEFAULT_AMMOUNT = 10
+
+    if request.args.get("p") is None:
+        return redirect(url_for("orders_index", p=1))
+
+    p = eval(request.args.get("p"))
+
+    if p < 1:
+        return redirect(url_for("orders_index", p=1))
+
+    with pool.connection() as conn:
+        with conn.cursor(row_factory=namedtuple_row) as cur:
+            try:
+                count = cur.execute(
+                    """
+                        SELECT COUNT(*) FROM orders;
+                    """
+                ).fetchone()[0]
+
+                if count == 0:
+                    return render_template(
+                        "orders/index.html", customers=[], p=1, last_p=1
+                    )
+
+                if DEFAULT_AMMOUNT * (p - 1) >= count:
+                    return redirect(
+                        url_for("orders_index", p=ceil(count / DEFAULT_AMMOUNT))
+                    )
+
+                orders = cur.execute(
+                    """
+                        SELECT * FROM orders LIMIT %(limit)s OFFSET %(page)s;
+                    """,
+                    {"page": DEFAULT_AMMOUNT * (p - 1), "limit": DEFAULT_AMMOUNT},
+                ).fetchall()
+
+                products = {}
+                sales = []
+                for order in orders:
+                    products[order[0]] = cur.execute(
+                        """
+                            SELECT sku, name, qty FROM orders NATURAL JOIN contains NATURAL JOIN product WHERE order_no = %s;
+                        """,
+                        (order[0],),
+                    ).fetchall()
+
+                    is_sale = cur.execute(
+                        """
+                            SELECT order_no FROM pay WHERE order_no = %s; 
+                        """,
+                        (order[0],),
+                    ).fetchone()
+
+                    if is_sale is not None:
+                        sales.append(order[0])
+            except:
+                flash(
+                    "There was an error getting the orders. Please try again later.",
+                    "error",
+                )
+                return redirect(url_for("index"))
+
+            return render_template(
+                "orders/index.html",
+                orders=orders,
+                products=products,
+                sales=sales,
+                p=p,
+                last_p=ceil(count / DEFAULT_AMMOUNT),
+            )
+
+
+@app.route("/orders/<order_no>", methods=("GET", "POST"))
+def orders_pay(order_no):
+    with pool.connection() as conn:
+        with conn.cursor(row_factory=namedtuple_row) as cur:
+            try:
+                order = cur.execute(
+                    """
+                        SELECT * FROM orders WHERE order_no = %s;
+                    """,
+                    (order_no,),
+                ).fetchone()
+
+                products = cur.execute(
+                    """
+                        SELECT sku, name, qty FROM contains NATURAL JOIN product WHERE order_no = %s;
+                    """,
+                    (order_no,),
+                ).fetchall()
+
+                total = cur.execute(
+                    """
+                        SELECT SUM(qty*price) FROM contains NATURAL JOIN product WHERE order_no = %s; 
+                    """,
+                    (order_no,),
+                ).fetchone()
+            except:
+                flash(
+                    "There was an error paying the order. Please try again later.",
+                    "error",
+                )
+                return redirect(url_for("orders_index"))
+
+    if request.method == "GET":
+        return render_template(
+            "orders/pay.html", order=order, products=products, total=total[0]
+        )
+
+    if request.method == "POST":
+        with pool.connection() as conn:
+            with conn.cursor(row_factory=namedtuple_row) as cur:
+                try:
+                    cur.execute(
+                        """
+                            INSERT INTO pay VALUES(%(order_no)s, %(cust_no)s);
+                        """,
+                        {"order_no": order[0], "cust_no": order[1]},
+                    )
+                except:
+                    flash(
+                        "There was an error paying the order. Please try again later.",
+                        "error",
+                    )
+                    return redirect(url_for("suppliers_index"))
+
+        flash(f"Order {order_no} paid successfully.", "info")
+        return redirect(url_for("orders_index"))
 
 
 if __name__ == "__main__":
