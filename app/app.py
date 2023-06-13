@@ -48,7 +48,51 @@ app.secret_key = "teste"
 
 @app.route("/", methods=("GET",))
 def index():
-    return render_template("base.html")
+    with pool.connection() as conn:
+        with conn.cursor(row_factory=namedtuple_row) as cur:
+            count_products = cur.execute(
+                """
+                SELECT COUNT(*) FROM product;
+                """
+            ).fetchone()[0]
+
+            count_suppliers = cur.execute(
+                """
+                SELECT COUNT(*) FROM supplier;
+                """
+            ).fetchone()[0]
+
+            count_customers = cur.execute(
+                """
+                SELECT COUNT(*) FROM customer;
+                """
+            ).fetchone()[0]
+
+            count_orders = cur.execute(
+                """
+                SELECT COUNT(*) FROM orders;
+                """
+            ).fetchone()[0]
+
+            count_employees = cur.execute(
+                """
+                SELECT COUNT(*) FROM employee;
+                """
+            ).fetchone()[0]
+
+            count_orders_pay = cur.execute(
+                """
+                SELECT COUNT(*) FROM orders NATURAL JOIN pay;
+                """
+            ).fetchone()[0]
+
+    return render_template("home/home.html",
+                           count_products=count_products,
+                           count_suppliers=count_suppliers,
+                           count_customers=count_customers,
+                           count_orders=count_orders,
+                           count_employees=count_employees,
+                           count_orders_pay=count_orders_pay)
 
 
 @app.route("/products", methods=("GET",))
@@ -553,6 +597,7 @@ def customers_index():
                 )
                 return redirect(url_for("index"))
 
+
     return render_template(
         "customers/index.html",
         customers=customers,
@@ -1000,7 +1045,6 @@ def customers_orders_new(cust_no):
                     )
 
         return redirect(url_for("customers_orders_index", cust_no=cust_no))
-
 
 if __name__ == "__main__":
     app.run()

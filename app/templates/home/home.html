@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block header %}
+<div class="subtitle-bar">
+    <h1 class="subtitle-text">{% block title %}Dashboard{% endblock %}</h1>
+</div>
+{% endblock %}
+{% block content %}
+<div class="box-container">
+ 
+    <div class="box box1"
+        onclick="location.href = '{{ url_for('products_index')}}';">
+        <span class="material-icons-outlined md-80 blue">
+            shopping_cart
+            </span>
+        <div class="text">
+            <h3 class="box-title">{{count_products}}</h3>
+            <h3 class="box-content">Products</h3>
+        </div>
+    </div>
+
+    <div class="box box2"
+        onclick="location.href = '{{ url_for('suppliers_index')}}';">
+        <span class="material-icons-outlined md-80 blue">
+            warehouse
+            </span>
+        <div class="text">
+            <h3 class="box-title">{{count_suppliers}}</h3>
+            <h3 class="box-content">Suppliers</h3>
+        </div>
+    </div>
+
+    <div class="box box3"
+        onclick="location.href = '{{ url_for('customers_index')}}';">
+        <span class="material-icons-outlined md-80 blue">
+            face
+            </span>
+        <div class="text">
+            <h3 class="box-title">{{count_customers}}</h3>
+            <h3 class="box-content">Customers</h3>
+        </div>
+    </div>
+
+    <div class="box box4"
+        onclick="location.href = '{{ url_for('customers_index')}}';">
+        <span class="material-icons-outlined md-80 blue">
+            local_shipping
+            </span>
+        <div class="text">
+            <h3 class="box-title">{{count_orders}}</h3>
+            <h3 class="box-content">Orders</h3>
+        </div>
+    </div>
+
+    <div class="box box5"
+    onclick="location.href = '{{ url_for('index')}}';">
+        <span class="material-icons-outlined md-80 blue">
+            badge
+            </span>
+        <div class="text">
+            <h3 class="box-title">{{count_employees}}</h3>
+            <h3 class="box-content">Employees</h3>
+        </div>
+    </div>
+
+    <div class="box box6"
+        onclick="location.href = '{{ url_for('customers_index')}}';">
+        <span class="material-icons-outlined md-80 blue">
+            paid
+            </span>
+        <div class="text">
+            <h3 class="box-title">{{count_orders_pay}}</h3>
+            <h3 class="box-content">Payed Orders</h3>
+        </div>
+    </div>
+</div>
+{% endblock %}

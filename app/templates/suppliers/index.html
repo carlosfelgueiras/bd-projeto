@@ -1,9 +1,13 @@
 {% extends 'paged.html' %}
-{% block title %}Suppliers{% endblock %} 
+
 {% block header %}
-<div style = "clear:both; width: 100%">
-  <h1 style="float: left">Suppliers</h1>
-  <h1 style="float: right"><a href="{{ url_for('suppliers_new')}}">New</a></h1>
+<div class="subtitle-bar">
+  <h1 class="subtitle-text">{% block title %}Suppliers{% endblock %} </h1>
+  <a class="button new" href="{{ url_for('suppliers_new')}}">
+    <span class="material-icons-outlined md-20 blue mr5">
+      add
+      </span>
+    New</a>
 </div>
 {% endblock %}
 {% block list %} 
@@ -16,9 +20,11 @@
           TIN: {{ supplier['tin'] }} | SKU: {{supplier['sku']}}
         </div>
       </div>
-      <a class="action" href="{{ url_for('suppliers_delete', tin=supplier['tin'])}}">
-        Remove
-      </a>
+      <a class="button delete" href="{{ url_for('suppliers_delete', tin=supplier['tin'])}}">
+        <span class="material-icons-outlined md-20 blue mr5">
+          delete
+          </span>
+        Delete</a>
     </header>
     <p class="body">{{ supplier['address'] }}</p>
     <p class="body"><b>Ends on:</b> {{ supplier['date'] }}</p>

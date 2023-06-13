@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 {% block header %}
-  <h1>{% block title %}New Customer{% endblock %}</h1>
+
+<div class="subtitle-bar">
+  <h1 class="subtitle-text">{% block title %}Customer | New{% endblock %}</h1>
+</div>
 {% endblock %}
 {% block content %}
   <form method="post">

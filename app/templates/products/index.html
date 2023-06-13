@@ -1,9 +1,13 @@
 {% extends 'paged.html' %}
-{% block title %}Products{% endblock %}
 {% block header %}
-<div style = "clear:both; width: 100%">
-  <h1 style="float: left">Products</h1>
-  <h1 style="float: right"><a href="{{ url_for('products_new')}}">New</a></h1>
+
+<div class="subtitle-bar">
+  <h1 class="subtitle-text">{% block title %}Products{% endblock %}</h1>
+  <a class="button new" href="{{ url_for('products_new')}}">
+    <span class="material-icons-outlined md-20 blue mr5">
+      add
+      </span>
+    New</a>
 </div>
   {% endblock %}
   {% block list %}
@@ -17,12 +21,16 @@
           {{product['ean']}} {% endif %}
         </div>
       </div>
-      <a class="action" href="{{ url_for('products_edit', sku=product['sku'])}}">
-        Edit
-      </a>
-      <a class="action" href="{{ url_for('products_delete', sku=product['sku'])}}">
-        Delete
-      </a>
+      <a class="button edit" href="{{ url_for('products_edit', sku=product['sku'])}}">
+        <span class="material-icons-outlined md-20 blue mr5">
+          edit
+          </span>
+        Edit</a>
+      <a class="button delete" href="{{ url_for('products_delete', sku=product['sku'])}}">
+        <span class="material-icons-outlined md-20 blue mr5">
+          delete
+          </span>
+        Delete</a>
     </header>
     <p class="body"><b>€ {{ product['price'] }}</b></p>
     <p class="body">{{ product['description'] }}</p>

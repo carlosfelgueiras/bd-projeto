@@ -1,9 +1,12 @@
 {% extends 'paged.html' %}
-{% block title %}Customers{% endblock %} 
 {% block header %}
-<div style = "clear:both; width: 100%">
-  <h1 style="float: left">Customers</h1>
-  <h1 style="float: right"><a href="{{ url_for('customers_new')}}">New</a></h1>
+<div class="subtitle-bar">
+  <h1 class="subtitle-text">{% block title %}Customers{% endblock %} </h1>
+  <a class="button new" href="{{ url_for('customers_new')}}">
+    <span class="material-icons-outlined md-20 blue mr5">
+      add
+      </span>
+    New</a>
 </div>
 {% endblock %}
 {% block list %} 
@@ -16,11 +19,13 @@
           No.: {{ customer['cust_no'] }} | {{ customer['phone'] }} | {{ customer['email'] }}
         </div>
       </div>
+      <a class="button delete" href="{{ url_for('customers_delete', cust_no=customer['cust_no']) }}">
+        <span class="material-icons-outlined md-20 blue mr5">
+          delete
+          </span>
+        Delete</a>
       <a class="action" href="{{ url_for('customers_orders_index', cust_no=customer['cust_no']) }}">
         View Orders
-      </a>
-      <a class="action" href="{{ url_for('customers_delete', cust_no=customer['cust_no']) }}">
-        Delete
       </a>
     </header>
     <p class="body">{{ customer['address'] }}</p>
