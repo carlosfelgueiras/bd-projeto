@@ -86,13 +86,15 @@ def index():
                 """
             ).fetchone()[0]
 
-    return render_template("home/home.html",
-                           count_products=count_products,
-                           count_suppliers=count_suppliers,
-                           count_customers=count_customers,
-                           count_orders=count_orders,
-                           count_employees=count_employees,
-                           count_orders_pay=count_orders_pay)
+    return render_template(
+        "home/home.html",
+        count_products=count_products,
+        count_suppliers=count_suppliers,
+        count_customers=count_customers,
+        count_orders=count_orders,
+        count_employees=count_employees,
+        count_orders_pay=count_orders_pay,
+    )
 
 
 @app.route("/products", methods=("GET",))
@@ -436,7 +438,6 @@ def suppliers_new():
             or len(request.form["address"]) > 255
             or len(request.form["sku"]) == 0
             or len(request.form["sku"]) > 255
-            # Verify date
         ):
             flash(
                 "There was an error adding the supplier. Please try again later.",
@@ -459,6 +460,14 @@ def suppliers_new():
             info["address"] = request.form["address"]
 
         if len(request.form["date"]) != 0:
+            try:
+                datetime.date.fromisoformat(request.form["address"])
+            except:
+                flash(
+                    "There was an error adding the supplier. Please try again later.",
+                    "error",
+                )
+                return redirect(url_for("suppliers_index"))
             info["date"] = request.form["date"]
 
         with pool.connection() as conn:
@@ -596,7 +605,6 @@ def customers_index():
                     "error",
                 )
                 return redirect(url_for("index"))
-
 
     return render_template(
         "customers/index.html",
@@ -1045,6 +1053,7 @@ def customers_orders_new(cust_no):
                     )
 
         return redirect(url_for("customers_orders_index", cust_no=cust_no))
+
 
 if __name__ == "__main__":
     app.run()
