@@ -242,6 +242,62 @@ input.danger {
   text-align: center;
 }
 
+.product-list-box{
+  background-color: #c5e8ff;
+  border-radius: 15px;
+  padding: 15px;
+  margin: 15px;
+}
+
+.product-list-header{
+  color: #377ba8;
+  font-size: 18px;
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+.product-list-item-wrapper{
+  height: 500px;
+  overflow-y: scroll;
+}
+
+.product-list-listing{
+  background-color: #ffffff;
+  border-radius: 15px;
+  padding: 10px;
+  margin: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.product-list-index {
+  background-color: #377ba8;
+  border-radius: 15px;
+  padding: 5px;
+  margin: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.product-list-index h3{
+  margin:0;
+  font-size:2;
+  color: #c5e8ff;
+  margin-left: 50px;
+  margin-right: 50px;
+}
+
+.product-list-listing label{
+  margin:0;
+}
+
+.product-list-listing input{
+  width:100px;
+  margin:0;
+}
+
 table {
   margin: 15px;
   margin-top: 5px;
@@ -410,7 +466,7 @@ thead th {
 }
 
 .button.edit:hover {
-  background-color: rgb(200, 200, 203);
+  background-color: #c8c8cb;
 }
 
 .button.delete {
@@ -428,7 +484,7 @@ thead th {
 
 .button.orders:hover {
   width: 100px;
-  background-color: #d6d6ea;
+  background-color: #c8c8cb;
 }
 
 .button.paid {

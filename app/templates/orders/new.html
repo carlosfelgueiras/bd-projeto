@@ -11,12 +11,25 @@
     <label for="order_no">Order Number*</label>
     <input name="order_no" id="order_no" type="number" value="" min="0" required />
     
-    {% for product in products %}
-    <div>
-        <label for="product:{{ product['sku'] }}">[{{ product['sku'] }}] {{ product['name'] }}</label>
-        <input name="product:{{ product['sku'] }}" id="product:{{ product['sku'] }}" type="number" value="0" min="0" required/>
+    <div class="product-list-box">
+      {% if products|length %}
+        <h3 class="product-list-header">SELECT PRODUCT QUANTITY</h3>
+        <div class="product-list-index">
+          <h3>Product</h3>
+          <h3>Qty</h3>
+        </div>
+        <div class="product-list-item-wrapper">
+          {% for product in products %}
+          <div class="product-list-listing">
+              <label for="product:{{ product['sku'] }}">[{{ product['sku'] }}] {{ product['name'] }}</label>
+              <input name="product:{{ product['sku'] }}" id="product:{{ product['sku'] }}" type="number" value="0" min="0" required/>
+          </div>
+        {% endfor %}
+        </div>
+      {% else %}
+        <h3 class="product-list-header">NO PRODUCTS AVAILABLE</h3>
+      {% endif %}
     </div>
-    {% endfor %}
 
     <div class="button_holder">
       <input type="submit" class="confirm" value="Create"/>
