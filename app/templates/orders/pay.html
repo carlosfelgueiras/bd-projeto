@@ -25,7 +25,7 @@
         <div class="product-list-item-wrapper">
             {% for product in products %}
                 <div class="product-list-listing">
-                    <label for="product:{{ product['sku'] }}">[{{ product['sku'] }}] {{ product['name'] }}</label>
+                    <label for="product:{{ product['sku'] }}"><b>{{ product['sku'] }}</b> {{ product['name'] }}</label>
                     <input type="number" value="{{ product['qty'] }}" min="0" disabled/>
                 </div>
             {% endfor %}
