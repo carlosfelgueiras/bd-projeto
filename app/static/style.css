@@ -226,6 +226,29 @@ input.danger {
   color: #cc2f2e;
 }
 
+input:focus {
+  outline-color: #377ba8;
+}
+
+textarea:focus {
+  outline-color: #377ba8;
+}
+
+.info-box {
+  background-color: #e3e3e3;
+  border-radius: 15px;
+  padding: 1px;
+  margin: 15px;
+  align-items: center;
+}
+
+.info-box-header {
+  color: rgb(0, 0, 0);
+  font-size: 16px;
+  letter-spacing: 1px;
+  text-align: center;
+}
+
 .warning-box {
   background-color: #fee0e0;
   border-radius: 15px;
