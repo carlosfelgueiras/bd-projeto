@@ -455,6 +455,7 @@ def suppliers_new():
         if (
             len(request.form["tin"]) == 0
             or len(request.form["tin"]) > 20
+            or len(request.form["name"]) == 0
             or len(request.form["name"]) > 200
             or len(request.form["address"]) > 255
             or len(request.form["sku"]) == 0
