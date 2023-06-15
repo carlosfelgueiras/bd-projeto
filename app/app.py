@@ -120,7 +120,7 @@ def products_index():
 
                 if count == 0:
                     return render_template(
-                        "products/index.html", products=[], p=1, last_p=1
+                        "products/index.html", products=[], p=1, last_p=1, empty=True
                     )
 
                 if DEFAULT_AMMOUNT * (p - 1) >= count:
@@ -157,8 +157,7 @@ def products_new():
     if request.method == "POST":
         # These conditions are enforced in the client side
         if (
-            len(request.form["description"]) == 0
-            or len(request.form["name"]) == 0
+            len(request.form["name"]) == 0
             or len(request.form["name"]) > 200
             or len(request.form["sku"]) == 0
             or len(request.form["sku"]) > 25
@@ -171,23 +170,29 @@ def products_new():
             )
             return redirect(url_for("products_index"))
 
+        data = {
+            "name": request.form["name"],
+            "sku": request.form["sku"],
+            "price": request.form["price"],
+            "description": None,
+            "ean": None,
+        }
+
+        if len(request.form["description"]) > 0:
+            data["description"] = request.form["description"]
+
+        if len(request.form["ean"]) > 0:
+            data["ean"] = request.form["ean"]
+
         with pool.connection() as conn:
             with conn.cursor(row_factory=namedtuple_row) as cur:
                 try:
-                    if len(request.form["ean"]) == 0:
-                        cur.execute(
-                            """
-                                INSERT INTO product VALUES(%(sku)s, %(name)s, %(description)s, %(price)s);
-                            """,
-                            request.form,
-                        )
-                    else:
-                        cur.execute(
-                            """
-                                INSERT INTO product VALUES(%(sku)s, %(name)s, %(description)s, %(price)s, %(ean)s);
-                            """,
-                            request.form,
-                        )
+                    cur.execute(
+                        """
+                            INSERT INTO product VALUES(%(sku)s, %(name)s, %(description)s, %(price)s, %(ean)s);
+                        """,
+                        data,
+                    )
                 except psycopg.errors.UniqueViolation:
                     flash("A product with the same SKU already exists.", "warn")
                 except:
@@ -395,7 +400,7 @@ def suppliers_index():
 
                 if count == 0:
                     return render_template(
-                        "suppliers/index.html", suppliers=[], p=1, last_p=1
+                        "suppliers/index.html", suppliers=[], p=1, last_p=1, empty=True
                     )
 
                 if DEFAULT_AMMOUNT * (p - 1) >= count:
@@ -585,7 +590,7 @@ def customers_index():
 
                 if count == 0:
                     return render_template(
-                        "customers/index.html", customers=[], p=1, last_p=1
+                        "customers/index.html", customers=[], p=1, last_p=1, empty=True
                     )
 
                 if DEFAULT_AMMOUNT * (p - 1) >= count:
@@ -622,8 +627,7 @@ def customers_new():
     if request.method == "POST":
         # These conditions are enforced in the client side
         if (
-            not request.form["cust_no"].isnumeric()
-            or len(request.form["name"]) == 0
+            len(request.form["name"]) == 0
             or len(request.form["name"]) > 80
             or len(request.form["email"]) == 0
             or len(request.form["email"]) > 254
@@ -637,7 +641,6 @@ def customers_new():
             return redirect(url_for("products_index"))
 
         info = {
-            "cust_no": request.form["cust_no"],
             "name": request.form["name"],
             "email": request.form["email"],
             "phone": None,
@@ -653,6 +656,14 @@ def customers_new():
         with pool.connection() as conn:
             with conn.cursor(row_factory=namedtuple_row) as cur:
                 try:
+                    cust_no = cur.execute(
+                        """
+                            SELECT MAX(cust_no) FROM customer;
+                        """
+                    ).fetchone()[0]
+
+                    info["cust_no"] = cust_no + 1
+
                     cur.execute(
                         """
                             INSERT INTO customer VALUES(%(cust_no)s, %(name)s, %(email)s, %(phone)s, %(address)s);
@@ -785,7 +796,7 @@ def orders_index():
 
                 if count == 0:
                     return render_template(
-                        "orders/index.html", customers=[], p=1, last_p=1
+                        "orders/index.html", customers=[], p=1, last_p=1, empty=True
                     )
 
                 if DEFAULT_AMMOUNT * (p - 1) >= count:
@@ -869,9 +880,22 @@ def orders_pay(order_no):
                 return redirect(url_for("orders_index"))
 
     if request.method == "GET":
-        return render_template(
-            "orders/pay.html", order=order, products=products, total=total[0]
-        )
+        from_customers = request.args.get("from_customer", "")
+        if from_customers == "True":
+            return render_template(
+                "orders/pay.html",
+                order=order,
+                products=products,
+                total=total[0],
+                from_customer=True,
+            )
+        else:
+            return render_template(
+                "orders/pay.html",
+                order=order,
+                products=products,
+                total=total[0],
+            )
 
     if request.method == "POST":
         with pool.connection() as conn:
@@ -891,7 +915,11 @@ def orders_pay(order_no):
                     return redirect(url_for("suppliers_index"))
 
         flash(f"Order {order_no} paid successfully.", "info")
-        return redirect(url_for("orders_index"))
+
+        if request.form["redirect_to_customer"] == "true":
+            return redirect(url_for("customers_orders_index", cust_no=order[1]))
+        else:
+            return redirect(url_for("orders_index"))
 
 
 @app.route("/customers/<cust_no>/orders", methods=("GET",))
@@ -918,7 +946,12 @@ def customers_orders_index(cust_no):
 
                 if count == 0:
                     return render_template(
-                        "orders/index.html", customers=[], p=1, last_p=1
+                        "orders/index.html",
+                        customers=[],
+                        p=1,
+                        last_p=1,
+                        cust_no=cust_no,
+                        empty=True,
                     )
 
                 if DEFAULT_AMMOUNT * (p - 1) >= count:
@@ -1029,13 +1062,19 @@ def customers_orders_new(cust_no):
 
         with pool.connection() as conn:
             with conn.cursor(row_factory=namedtuple_row) as cur:
+                order_no = cur.execute(
+                    """
+                        SELECT MAX(order_no) FROM orders;
+                    """
+                ).fetchone()[0]
+
                 cur.execute(
                     """
                         INSERT INTO orders VALUES(%(order_no)s, %(cust_no)s, %(date)s)
                     """,
                     {
                         "cust_no": cust_no,
-                        "order_no": request.form["order_no"],
+                        "order_no": order_no + 1,
                         "date": datetime.date.today().strftime("%Y-%m-%d"),
                     },
                 )
@@ -1046,7 +1085,7 @@ def customers_orders_new(cust_no):
                             INSERT INTO contains VALUES(%(order_no)s, %(sku)s, %(qty)s)
                         """,
                         {
-                            "order_no": request.form["order_no"],
+                            "order_no": order_no + 1,
                             "sku": product,
                             "qty": contained_products[product],
                         },

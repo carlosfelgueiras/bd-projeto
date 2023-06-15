@@ -5,6 +5,9 @@
 
 {% block content %}
 
+  {% if empty is defined %}
+  <h1>No items found</h1>
+  {% else %}
   {% block list %}{% endblock %}
 
   <div style="text-align:center">
@@ -27,5 +30,6 @@
       {% endif %}
     </div>
   </div>
+  {% endif %}
 
 {% endblock %}
