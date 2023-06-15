@@ -141,7 +141,7 @@ def products_index():
                 ).fetchall()
             except:
                 flash(
-                    "There was an error adding the product. Please try again later.",
+                    "There was an error listing the products. Please try again later.",
                     "error",
                 )
                 return redirect(url_for("index"))
@@ -179,7 +179,7 @@ def products_new():
             )
             return redirect(url_for("products_index"))
 
-        data = {
+        info = {
             "name": request.form["name"],
             "sku": request.form["sku"],
             "price": request.form["price"],
@@ -188,10 +188,10 @@ def products_new():
         }
 
         if len(request.form["description"]) > 0:
-            data["description"] = request.form["description"]
+            info["description"] = request.form["description"]
 
         if len(request.form["ean"]) > 0:
-            data["ean"] = request.form["ean"]
+            info["ean"] = request.form["ean"]
 
         with pool.connection() as conn:
             with conn.cursor(row_factory=namedtuple_row) as cur:
@@ -200,7 +200,7 @@ def products_new():
                         """
                             INSERT INTO product VALUES(%(sku)s, %(name)s, %(description)s, %(price)s, %(ean)s);
                         """,
-                        data,
+                        info,
                     )
                 except psycopg.errors.UniqueViolation:
                     flash("A product with the same SKU already exists.", "warn")
@@ -210,6 +210,7 @@ def products_new():
                         "error",
                     )
 
+                flash(f"Product {info['sku']} added successfully.", "info")
                 return redirect(url_for("products_index"))
 
 
@@ -220,8 +221,8 @@ def products_edit(sku):
             try:
                 product = cur.execute(
                     """
-                            SELECT * FROM product WHERE sku = %s
-                        """,
+                        SELECT * FROM product WHERE sku = %s
+                    """,
                     (sku,),
                 ).fetchone()
 
@@ -230,7 +231,7 @@ def products_edit(sku):
                     return redirect(url_for("products_index"))
             except:
                 flash(
-                    "There was an error adding the product. Please try again later.",
+                    "There was an error editing the product. Please try again later.",
                     "error",
                 )
                 return redirect(url_for("products_index"))
@@ -267,6 +268,8 @@ def products_edit(sku):
                         "There was an error editing the product. Please try again later.",
                         "error",
                     )
+
+        flash(f"Product {sku} edited successfully.", "info")
         return redirect(url_for("products_index"))
 
 
@@ -329,7 +332,7 @@ def products_delete(sku):
                 ).fetchall()
             except:
                 flash(
-                    "There was an error adding the product. Please try again later.",
+                    "There was an error deleting the product. Please try again later.",
                     "error",
                 )
                 return redirect(url_for("products_index"))
@@ -378,7 +381,7 @@ def products_delete(sku):
                     )
                 except:
                     flash(
-                        "There was an error adding the product. Please try again later.",
+                        "There was an error deleting the product. Please try again later.",
                         "error",
                     )
                     return redirect(url_for("products_index"))
@@ -508,6 +511,8 @@ def suppliers_new():
                         "There was an error adding the supplier. Please try again later.",
                         "error",
                     )
+
+            flash(f"Supplier {info['tin']} added successfully.", "info")
             return redirect(url_for("suppliers_index"))
 
 
@@ -659,7 +664,7 @@ def customers_new():
             or len(request.form["address"]) > 255
         ):
             flash(
-                "There was an error adding the product. Please try again later.",
+                "There was an error adding the customer. Please try again later.",
                 "error",
             )
             return redirect(url_for("products_index"))
@@ -694,14 +699,13 @@ def customers_new():
                         """,
                         info,
                     )
-                except psycopg.errors.UniqueViolation:
-                    flash("A customer with the same number already exists.", "warn")
                 except:
                     flash(
-                        "There was an error adding the product. Please try again later.",
+                        "There was an error adding the customer. Please try again later.",
                         "error",
                     )
 
+                flash(f"Customer {info['cust_no']} added successfully.", "info")
                 return redirect(url_for("customers_index"))
 
 
@@ -1048,8 +1052,8 @@ def customers_orders_new(cust_no):
             try:
                 customer = cur.execute(
                     """
-                            SELECT * FROM customer WHERE cust_no = %s;
-                        """,
+                        SELECT * FROM customer WHERE cust_no = %s;
+                    """,
                     (cust_no,),
                 ).fetchone()
 
@@ -1098,11 +1102,14 @@ def customers_orders_new(cust_no):
 
         with pool.connection() as conn:
             with conn.cursor(row_factory=namedtuple_row) as cur:
-                order_no = cur.execute(
-                    """
+                order_no = (
+                    cur.execute(
+                        """
                         SELECT MAX(order_no) FROM orders;
                     """
-                ).fetchone()[0]
+                    ).fetchone()[0]
+                    + 1
+                )
 
                 cur.execute(
                     """
@@ -1110,7 +1117,7 @@ def customers_orders_new(cust_no):
                     """,
                     {
                         "cust_no": cust_no,
-                        "order_no": order_no + 1,
+                        "order_no": order_no,
                         "date": datetime.date.today().strftime("%Y-%m-%d"),
                     },
                 )
@@ -1121,12 +1128,13 @@ def customers_orders_new(cust_no):
                             INSERT INTO contains VALUES(%(order_no)s, %(sku)s, %(qty)s)
                         """,
                         {
-                            "order_no": order_no + 1,
+                            "order_no": order_no,
                             "sku": product,
                             "qty": contained_products[product],
                         },
                     )
 
+        flash(f"Order {order_no} added successfully.", "info")
         return redirect(url_for("customers_orders_index", cust_no=cust_no))
 
 
