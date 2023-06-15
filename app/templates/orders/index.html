@@ -4,7 +4,7 @@
 <div class="subtitle-bar">
   <h1 class="subtitle-text">Orders {% if cust_no is defined %} - Customer No. {{cust_no}} {% endif %}</h1>
   
-  {% if cust_no is defined%}
+  {% if cust_no is defined %}
   <a class="button new" href="{{ url_for('customers_orders_new', cust_no=cust_no)}}">
     <span class="material-icons-outlined md-20 blue mr5">
       add

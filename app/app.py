@@ -627,8 +627,7 @@ def customers_new():
     if request.method == "POST":
         # These conditions are enforced in the client side
         if (
-            not request.form["cust_no"].isnumeric()
-            or len(request.form["name"]) == 0
+            len(request.form["name"]) == 0
             or len(request.form["name"]) > 80
             or len(request.form["email"]) == 0
             or len(request.form["email"]) > 254
@@ -642,7 +641,6 @@ def customers_new():
             return redirect(url_for("products_index"))
 
         info = {
-            "cust_no": request.form["cust_no"],
             "name": request.form["name"],
             "email": request.form["email"],
             "phone": None,
@@ -658,6 +656,14 @@ def customers_new():
         with pool.connection() as conn:
             with conn.cursor(row_factory=namedtuple_row) as cur:
                 try:
+                    cust_no = cur.execute(
+                        """
+                            SELECT MAX(cust_no) FROM customer;
+                        """
+                    ).fetchone()[0]
+
+                    info["cust_no"] = cust_no + 1
+
                     cur.execute(
                         """
                             INSERT INTO customer VALUES(%(cust_no)s, %(name)s, %(email)s, %(phone)s, %(address)s);
@@ -940,7 +946,7 @@ def customers_orders_index(cust_no):
 
                 if count == 0:
                     return render_template(
-                        "orders/index.html", customers=[], p=1, last_p=1
+                        "orders/index.html", customers=[], p=1, last_p=1, cust_no=cust_no
                     )
 
                 if DEFAULT_AMMOUNT * (p - 1) >= count:
@@ -1051,13 +1057,19 @@ def customers_orders_new(cust_no):
 
         with pool.connection() as conn:
             with conn.cursor(row_factory=namedtuple_row) as cur:
+                order_no = cur.execute(
+                    """
+                        SELECT MAX(order_no) FROM orders;
+                    """
+                ).fetchone()[0]
+
                 cur.execute(
                     """
                         INSERT INTO orders VALUES(%(order_no)s, %(cust_no)s, %(date)s)
                     """,
                     {
                         "cust_no": cust_no,
-                        "order_no": request.form["order_no"],
+                        "order_no": order_no + 1,
                         "date": datetime.date.today().strftime("%Y-%m-%d"),
                     },
                 )
@@ -1068,7 +1080,7 @@ def customers_orders_new(cust_no):
                             INSERT INTO contains VALUES(%(order_no)s, %(sku)s, %(qty)s)
                         """,
                         {
-                            "order_no": request.form["order_no"],
+                            "order_no": order_no + 1,
                             "sku": product,
                             "qty": contained_products[product],
                         },

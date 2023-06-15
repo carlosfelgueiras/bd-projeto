@@ -8,9 +8,7 @@
   <form method="post">
     <label for="cust_no">Customer Number</label>
     <input name="cust_no" id="cust_no" type="text" value="{{ customer['cust_no'] }}" maxlength="25" disabled />
-    <label for="order_no">Order Number*</label>
-    <input name="order_no" id="order_no" type="number" value="" min="0" required />
-    
+     
     <div class="product-list-box">
       {% if products|length %}
         <h3 class="product-list-header">SELECT PRODUCT QUANTITY</h3>
