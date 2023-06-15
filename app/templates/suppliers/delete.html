@@ -1,5 +1,4 @@
 {% extends 'base.html' %} {% block header %}
-
 <div class="subtitle-bar">
     <h1 class="subtitle-text">{% block title %}Supplier | Delete{% endblock %}</h1>
 </div>
@@ -7,30 +6,29 @@
 <form method="post">
     <label for="tin">Do you wish to delete the supplier with the following TIN:</label>
     <input name="tin" id="tin" type="text" value="{{ supplier['tin'] }}" disabled />
-    <br/>
 
     {% if deliveries|length %}
-    <label>By deleting this supplier, you will also delete the following delivery records:</label>
-    <table>
-        <tr>
-            <th>TIN</th>
-            <th>Address</th>
-        </tr>
+    <div class="warning-box">
+        <h3 class="warning-header">WARNING</h3>
+        <label>By deleting this supplier, you will also delete the following <u>delivery</u> records:</label>
+        <table class="warning">
+            <tr>
+                <th>TIN</th>
+                <th>Address</th>
+            </tr>
 
-        {% for delivery in deliveries %}
-        <tr>
-            <th>{{ delivery['tin'] }}</th>
-            <th>{{ delivery['address'] }}</th>
-        </tr>
-        {% endfor %}
-
-    </table>
+            {% for delivery in deliveries %}
+            <tr>
+                <td>{{ delivery['tin'] }}</td>
+                <td>{{ delivery['address'] }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
     {% endif %}
 
-    <br/>
-
     <div class="button_holder">
-        <input type="submit" value="Cancel" formaction="{{ url_for('suppliers_index') }}" formmethod="get" style="margin-right:5em" />
+        <input type="submit" class="cancel" value="Cancel" formaction="{{ url_for('suppliers_index') }}" formmethod="get" style="margin-right:5em" />
         <input class="danger" type="submit" value="Delete"/>
     </div>
 </form>

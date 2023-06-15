@@ -8,6 +8,7 @@ body {
   max-width: 1000px;
   margin: 0 auto;
   background: white;
+  border-radius: 15px;
 }
 
 h1,
@@ -43,6 +44,8 @@ nav {
   background: lightgray;
   display: flex;
   align-items: center;
+  border-top-left-radius: 15px ;
+  border-top-right-radius: 15px ;
   padding: 0 0.5rem;
   height: 3em;
 }
@@ -70,9 +73,21 @@ nav ul li a,
 nav ul li span,
 header .action {
   display: block;
-  padding: 0.5rem;
+  padding: 13px 1em;
   text-decoration: none;
   font-weight: 600;
+  border-radius: 5px ;
+}
+
+nav ul li a:hover:not(.active){
+  outline-style:solid;
+  outline-width: 0.05px;
+  outline-color: #377ba8;
+  background-color: rgb(193, 203, 210);
+}
+
+nav ul li a .active{
+  background-color: #a9d8f7;
 }
 
 .content {
@@ -93,8 +108,9 @@ header .action {
 .flash {
   margin: 1em 0;
   padding: 1em;
-  background: #cae6f6;
+  background: #cfe7f9;
   border: 1px solid #377ba8;
+  border-radius: 5px;
 }
 
 .error {
@@ -150,16 +166,33 @@ header .action {
   margin: 1em 0;
   display: flex;
   flex-direction: column;
+  text-align: left;
+  margin:10px;
 }
 
 .content label {
+  font-family: "Roboto", sans-serif;
+  color: #000000;
+  font-weight: 300;
   font-weight: bold;
   margin-bottom: 0.5em;
 }
 
 .content input,
 .content textarea {
-  margin-bottom: 1em;
+  margin-bottom: 15px;
+  border: 0;
+  padding: 10px;
+  box-shadow:0 3px 6px rgba(0,0,0,0.12), 0 3px 6px rgba(0,0,0,0.18);
+  border-radius: 10px;
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  font-size: 16px
+}
+
+.content input:disabled{
+  background-color: #ebeaea;
+  box-shadow: 0 0 0 0;
 }
 
 .content textarea {
@@ -167,24 +200,78 @@ header .action {
   resize: vertical;
 }
 
-input.danger {
-  color: #cc2f2e;
-}
-
 input[type="submit"] {
   align-self: start;
   min-width: 15em;
   min-height: 3em;
+  margin: 10px
+}
+
+input[type="submit"]:hover {
+  cursor:pointer;
+  transform: scale(1.08);
+}
+
+input.confirm{
+  background-color: #a9d8f7;
+  color:#377ba8;
+}
+
+input.cancel{
+  background-color: #dedede;
+  color:#000000;
+}
+
+input.danger {
+  background-color: #f6caca;
+  color: #cc2f2e;
+}
+
+.warning-box{
+  background-color: #fee0e0;
+  border-radius: 15px;
+  padding: 15px;
+  margin: 15px;
+  display: table;
+}
+
+.warning-header{
+  color: red;
+  font-size: 18px;
+  letter-spacing: 1px;
+  text-align: center;
 }
 
 table {
+  margin: 15px;
+  margin-top: 5px;
   border-collapse: collapse;
 }
 
-th,
-td {
-  border: 1px solid black;
+.warning{
+  width:96%;
+  margin-top: 10px;
+}
+
+.warning td {
   padding: 8px;
+  text-align: center;
+  border-bottom: 1px solid #ffffff;
+}
+
+.warning th{
+  background-color: #a83737;
+  color: white;
+  padding: 8px;
+  text-align: center;
+  border-bottom: 1px solid #ffffff;
+}
+
+.warning tr:nth-child(odd) {
+  background-color: #fcdede;
+}
+.warning tr:nth-child(even) {
+  background-color: #feebeb;
 }
 
 thead th {
@@ -298,7 +385,7 @@ thead th {
   height: 2px;
   width: 50px;
   border-radius: 20px;
-  box-shadow: 1px 1px 5px rgba(1, 40, 113, 0.751);
+  box-shadow: 0 3px 6px rgba(0,0,0,0.12), 0 3px 6px rgba(0,0,0,0.18);
   padding: 15px;
   display: flex;
   align-items: center;
@@ -323,7 +410,7 @@ thead th {
 }
 
 .button.edit:hover {
-  background-color: #d6d6ea;
+  background-color: rgb(200, 200, 203);
 }
 
 .button.delete {
@@ -359,6 +446,9 @@ thead th {
 }
 .material-icons-outlined.blue {
   color: #377ba8;
+}
+.material-icons-outlined.gray {
+  color: #717171
 }
 .material-icons-outlined.mr5 {
   margin-right: 5px;

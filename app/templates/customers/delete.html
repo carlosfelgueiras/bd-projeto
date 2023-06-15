@@ -7,29 +7,29 @@
 <form method="post">
     <label for="cust_no">Do you wish to delete the following customer:</label>
     <input name="cust_no" id="cust_no" type="text" value="{{ customer['cust_no'] }}" disabled />
-    <br/>
     
     {% if orders|length %}
-    <label>By deleting this customer, you will the delete the following orders:</label>
-    <table>
-        <tr>
-            <th>Order No.</th>
-            <th>Date No.</th>
-        </tr>
+    <div class="warning-box">
+        <h3 class="warning-header">WARNING</h3>
+        <label>By deleting this customer, you will the delete the following <u>orders</u>:</label>
+        <table class="warning">
+            <tr>
+                <th>Order No.</th>
+                <th>Date No.</th>
+            </tr>
 
-        {% for order in orders %}
-        <tr>
-            <td>{{ order['order_no'] }}</td>
-            <td>{{ order['date'] }}</td>
-        </tr>
-        {% endfor %}
-    </table>
+            {% for order in orders %}
+            <tr>
+                <td>{{ order['order_no'] }}</td>
+                <td>{{ order['date'] }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
     {% endif %}
-    
-    <br/>
 
     <div class="button_holder">
-        <input type="submit" value="Cancel" formaction="{{ url_for('customers_index') }}" formmethod="get" style="margin-right:5em" />         
+        <input type="submit" class="cancel" value="Cancel" formaction="{{ url_for('customers_index') }}" formmethod="get" style="margin-right:5em" />         
         <input class="danger" type="submit" value="Delete" />
     </div>
 </form>
