@@ -65,7 +65,7 @@ nav h1 a {
 nav ul {
   display: flex;
   list-style: none;
-  margin: 0;
+  margin: 5px;
   padding: 0;
 }
 
@@ -225,6 +225,29 @@ input.cancel {
 input.danger {
   background-color: #f6caca;
   color: #cc2f2e;
+}
+
+input:focus {
+  outline-color: #377ba8;
+}
+
+textarea:focus {
+  outline-color: #377ba8;
+}
+
+.info-box {
+  background-color: #e3e3e3;
+  border-radius: 15px;
+  padding: 1px;
+  margin: 15px;
+  align-items: center;
+}
+
+.info-box-header {
+  color: rgb(0, 0, 0);
+  font-size: 16px;
+  letter-spacing: 1px;
+  text-align: center;
 }
 
 .warning-box {

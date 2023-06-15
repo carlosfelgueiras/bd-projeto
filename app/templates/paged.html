@@ -6,7 +6,10 @@
 {% block content %}
 
   {% if empty is defined %}
-  <h1>No items found</h1>
+
+  <div class="info-box">
+    <h1 class="info-box-header">No items found</h1>
+  </div>
   {% else %}
   {% block list %}{% endblock %}
 
