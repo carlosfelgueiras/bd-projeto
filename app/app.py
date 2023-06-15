@@ -157,8 +157,7 @@ def products_new():
     if request.method == "POST":
         # These conditions are enforced in the client side
         if (
-            len(request.form["description"]) == 0
-            or len(request.form["name"]) == 0
+            len(request.form["name"]) == 0
             or len(request.form["name"]) > 200
             or len(request.form["sku"]) == 0
             or len(request.form["sku"]) > 25
@@ -171,23 +170,29 @@ def products_new():
             )
             return redirect(url_for("products_index"))
 
+        data = {
+            "name": request.form["name"],
+            "sku": request.form["sku"],
+            "price": request.form["price"],
+            "description": None,
+            "ean": None,
+        }
+
+        if len(request.form["description"]) > 0:
+            data["description"] = request.form["description"]
+
+        if len(request.form["ean"]) > 0:
+            data["ean"] = request.form["ean"]
+
         with pool.connection() as conn:
             with conn.cursor(row_factory=namedtuple_row) as cur:
                 try:
-                    if len(request.form["ean"]) == 0:
-                        cur.execute(
-                            """
-                                INSERT INTO product VALUES(%(sku)s, %(name)s, %(description)s, %(price)s);
-                            """,
-                            request.form,
-                        )
-                    else:
-                        cur.execute(
-                            """
-                                INSERT INTO product VALUES(%(sku)s, %(name)s, %(description)s, %(price)s, %(ean)s);
-                            """,
-                            request.form,
-                        )
+                    cur.execute(
+                        """
+                            INSERT INTO product VALUES(%(sku)s, %(name)s, %(description)s, %(price)s, %(ean)s);
+                        """,
+                        data,
+                    )
                 except psycopg.errors.UniqueViolation:
                     flash("A product with the same SKU already exists.", "warn")
                 except:

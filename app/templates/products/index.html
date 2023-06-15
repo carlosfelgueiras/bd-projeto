@@ -33,7 +33,13 @@
         Delete</a>
     </header>
     <p class="body"><b>€ {{ product['price'] }}</b></p>
+    
+    {% if product['description'] is not none%}
     <p class="body">{{ product['description'] }}</p>
+    {% else %}
+    <p class="body">(The product does not have a description)</p>
+    {% endif %}
+
   </article>
   {% if not loop.last %}
   <hr />
