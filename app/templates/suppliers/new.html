@@ -8,13 +8,13 @@
 {% block content %}
   <form method="post">
     <label for="tin">TIN*</label>
-    <input name="tin" id="tin" type="text" value="" pattern="[0-9]{20}" maxlength="20" required/>
+    <input name="tin" id="tin" type="text" placeholder="Ex.: 122365939" value="" pattern="[0-9]{20}" maxlength="20" required/>
     <label for="name">Name*</label>
-    <input name="name" id="name" type="text" value="" maxlength="200" required />
+    <input name="name" id="name" type="text" placeholder="Ex.: John Doe" value="" maxlength="200" required />
     <label for="address">Address*</label>
-    <input name="address" id="address" type="text" value="" maxlength="255" required />
+    <input name="address" id="address" type="text" placeholder="Ex.: John Doe Street, 1234-567 City" value="" maxlength="255" required />
     <label for="sku">SKU*</label>
-    <input name="sku" id="sku" type="text" value="" maxlength="25" required />
+    <input name="sku" id="sku" type="text" placeholder="Ex.: B1234567" value="" maxlength="25" required />
     <label for="date">Date*</label>
     <input name="date" id="date" type="date" value="" required />
     <div class="button_holder">

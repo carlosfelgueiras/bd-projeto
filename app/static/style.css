@@ -80,10 +80,10 @@ header .action {
 }
 
 nav ul li a:hover:not(.active) {
-  outline-style: solid;
-  outline-width: 0.05px;
-  outline-color: #377ba8;
   background-color: rgb(193, 203, 210);
+  box-shadow:0 3px 6px rgba(0,0,0,0.12), 0 3px 6px rgba(0,0,0,0.18);
+  transition: ease-in-out;
+  transition-duration: 0.2s;
 }
 
 nav ul li a .active {
@@ -256,9 +256,9 @@ input.danger {
   text-align: center;
 }
 
-.product-list-item-wrapper {
+.product-list-item-wrapper{
   max-height: 500px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .product-list-listing {
@@ -296,6 +296,24 @@ input.danger {
 .product-list-listing input {
   width: 100px;
   margin: 0;
+}
+
+.product-list-total {
+  background-color: #377ba8;
+  border-radius: 15px;
+  padding: 5px;
+  margin: 5px;
+  display: flex;
+  justify-content:center;
+  align-items: center;
+}
+
+.product-list-total h3{
+  margin:0;
+  font-size:2;
+  color: #ffffff;
+  margin-left: 50px;
+  margin-right: 50px;
 }
 
 table {
@@ -438,8 +456,8 @@ thead th {
 }
 
 .button {
-  height: 2px;
-  width: 50px;
+  height: 4px;
+  width: 60px;
   border-radius: 20px;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12), 0 3px 6px rgba(0, 0, 0, 0.18);
   padding: 15px;
@@ -471,6 +489,7 @@ thead th {
 
 .button.delete {
   background-color: #fcc7c7;
+  color:#cc2f2e;
 }
 
 .button.delete:hover {
@@ -505,6 +524,9 @@ thead th {
 }
 .material-icons-outlined.gray {
   color: #717171;
+}
+.material-icons-outlined.red {
+  color: #cc2f2e
 }
 .material-icons-outlined.mr5 {
   margin-right: 5px;

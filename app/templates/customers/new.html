@@ -8,13 +8,13 @@
 {% block content %}
   <form method="post">
     <label for="name">Name*</label>
-    <input name="name" id="name" type="text" value="" maxlength="80" required />
+    <input name="name" id="name" type="text" placeholder="Ex.: John Doe" value="" maxlength="80" required />
     <label for="email">Email*</label>
-    <input name="email" id="email" type="text" value="" maxlength="254" required />
+    <input name="email" id="email" type="text" placeholder="Ex.: johndoe@mail.com" value="" maxlength="254" required />
     <label for="phone">Phone Number</label>
-    <input name="phone" id="phone" type="text" value="" maxlength="15" />
+    <input name="phone" id="phone" type="text" placeholder="Ex.: 912345678" value="" maxlength="15" />
     <label for="address">Address</label>
-    <input name="address" id="address" type="text" value="" maxlength="255" />
+    <input name="address" id="address" type="text" placeholder="Ex.: John Doe Street, 1234-567 City" value="" maxlength="255" />
     <div class="button_holder">
       <input type="submit" class="confirm" value="Create"/>
     </div>

@@ -9,21 +9,32 @@
 
     <label for="cust_no">By the following client:</label>
     <input name="cust_no" id="cust_no" type="text" value="{{ order['cust_no'] }}" disabled />
-    
+
     {% if from_customer is defined %}
     <input name="redirect_to_customer" type="hidden" value="true"/>
     {% else %}
     <input name="redirect_to_customer" type="hidden" value="false"/>
-    {% endif %}
+    {% endif %}            
+      
+    <div class="product-list-box">
+        <h3 class="product-list-header">PRODUCTS CONTAINED</h3>
+        <div class="product-list-index">
+            <h3>Product</h3>
+            <h3>Qty</h3>
+        </div>
+        <div class="product-list-item-wrapper">
+            {% for product in products %}
+                <div class="product-list-listing">
+                    <label for="product:{{ product['sku'] }}">[{{ product['sku'] }}] {{ product['name'] }}</label>
+                    <input type="number" value="{{ product['qty'] }}" min="0" disabled/>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="product-list-total">
+            <h3>Total : <b>{{ total }}€</b></h3>
+        </div>
+    </div>
 
-    <label for="products">Products:</label>
-    <pre id="products">
-        {% for product in products %}
-        - {{ product['qty'] }} x [{{ product['sku'] }}] {{ product['name'] }}
-        {% endfor %}
-        <br/>
-        <b>Total:</b> {{ total }}€</p>
-    </pre>
     <div class="button_holder">
         <input type="submit" class="cancel" value="Cancel" formaction="{{ url_for('orders_index') }}" formmethod="get" style="margin-right:5em" /> 
         <input type="submit" class="confirm" value="Pay"/>

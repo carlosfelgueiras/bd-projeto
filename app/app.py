@@ -861,7 +861,7 @@ def orders_pay(order_no):
 
                 products = cur.execute(
                     """
-                        SELECT sku, name, qty FROM contains NATURAL JOIN product WHERE order_no = %s;
+                        SELECT sku, name, qty FROM contains NATURAL JOIN product WHERE order_no = %s ORDER BY name;
                     """,
                     (order_no,),
                 ).fetchall()
@@ -1025,7 +1025,7 @@ def customers_orders_new(cust_no):
 
                 products = cur.execute(
                     """
-                            SELECT sku, name, price FROM product;
+                            SELECT sku, name, price FROM product ORDER BY name;
                         """
                 ).fetchall()
             except:
