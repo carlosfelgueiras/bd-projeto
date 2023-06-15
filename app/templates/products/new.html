@@ -16,7 +16,8 @@
     <input name="price" id="price" type="number" min="0" max="9999999999.99" step="0.01" placeholder="0.00" value="" required/>
     <label for="ean">EAN</label>
     <input name="ean" id="ean" type="text" value="" pattern="[0-9]{13}" maxlength="13"/>
-    <input type="submit" value="Create"/>
+    <div class="button_holder">
+      <input type="submit" class="confirm" value="Create"/>
+    </div>
   </form>
-  <hr />
 {% endblock %}

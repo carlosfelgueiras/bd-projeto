@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% block header %}
-  <h1>{% block title %}New Order{% endblock %}</h1>
+<div class="subtitle-bar">
+  <h1 class="subtitle-text">{% block title %}New Order{% endblock %}</h1>
+</div>
 {% endblock %}
 {% block content %}
   <form method="post">
@@ -16,8 +18,8 @@
     </div>
     {% endfor %}
 
-
-    <input type="submit" value="Create"/>
+    <div class="button_holder">
+      <input type="submit" class="confirm" value="Create"/>
+    </div>
   </form>
-  <hr />
 {% endblock %}
