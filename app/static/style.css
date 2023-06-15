@@ -177,6 +177,21 @@ nav ul li a.active {
   margin-bottom: 0.5em;
 }
 
+.required:after {
+  content:" *";
+  color:red;
+}
+
+label.required-description {
+  color: red;
+  font-size:12px;
+}
+
+.required-description:before {
+  content:"* ";
+  color:red;
+}
+
 .content input,
 .content textarea {
   margin-bottom: 15px;
