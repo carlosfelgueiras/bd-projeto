@@ -14,10 +14,17 @@
 <nav>
   <h1 class="main-title"><a href="/">eSells</a></h1>
   <ul>
+    {% if page is defined %}
+    <li><a {% if page == 'products' %} class="active" {% endif %} href="{{ url_for('products_index') }}">Products</a></li>
+    <li><a {% if page == 'suppliers' %} class="active" {% endif %} href="{{ url_for('suppliers_index') }}">Suppliers</a></li>
+    <li><a {% if page == 'customers' %} class="active" {% endif %} href="{{ url_for('customers_index') }}">Customers</a></li>
+    <li><a {% if page == 'orders' %} class="active" {% endif %} href="{{ url_for('orders_index') }}">Orders</a></li>
+    {% else %}
     <li><a href="{{ url_for('products_index') }}">Products</a></li>
     <li><a href="{{ url_for('suppliers_index') }}">Suppliers</a></li>
     <li><a href="{{ url_for('customers_index') }}">Customers</a></li>
     <li><a href="{{ url_for('orders_index') }}">Orders</a></li>
+    {% endif%}
   </ul>
 </nav>
 <section class="content">

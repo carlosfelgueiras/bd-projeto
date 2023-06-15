@@ -65,7 +65,7 @@ nav h1 a {
 nav ul {
   display: flex;
   list-style: none;
-  margin: 5px;
+  margin: 6px;
   padding: 0;
 }
 
@@ -73,21 +73,20 @@ nav ul li a,
 nav ul li span,
 header .action {
   display: block;
-  padding: 13px 1em;
+  padding: 14.75px 1em;
   text-decoration: none;
   font-weight: 600;
-  border-radius: 5px;
 }
 
 nav ul li a:hover:not(.active) {
   background-color: rgb(193, 203, 210);
-  box-shadow:0 3px 6px rgba(0,0,0,0.12), 0 3px 6px rgba(0,0,0,0.18);
   transition: ease-in-out;
   transition-duration: 0.2s;
 }
 
-nav ul li a .active {
-  background-color: #a9d8f7;
+nav ul li a.active {
+  background-color: #377ba8;
+  color: #a9d8f7;
 }
 
 .content {
@@ -279,7 +278,7 @@ textarea:focus {
   text-align: center;
 }
 
-.product-list-item-wrapper{
+.product-list-item-wrapper {
   max-height: 500px;
   overflow-y: auto;
 }
@@ -314,6 +313,7 @@ textarea:focus {
 
 .product-list-listing label {
   margin: 0;
+  font-weight: 400;
 }
 
 .product-list-listing input {
@@ -327,13 +327,13 @@ textarea:focus {
   padding: 5px;
   margin: 5px;
   display: flex;
-  justify-content:center;
+  justify-content: center;
   align-items: center;
 }
 
-.product-list-total h3{
-  margin:0;
-  font-size:2;
+.product-list-total h3 {
+  margin: 0;
+  font-size: 2;
   color: #ffffff;
   margin-left: 50px;
   margin-right: 50px;
@@ -512,7 +512,7 @@ thead th {
 
 .button.delete {
   background-color: #fcc7c7;
-  color:#cc2f2e;
+  color: #cc2f2e;
 }
 
 .button.delete:hover {
@@ -549,7 +549,7 @@ thead th {
   color: #717171;
 }
 .material-icons-outlined.red {
-  color: #cc2f2e
+  color: #cc2f2e;
 }
 .material-icons-outlined.mr5 {
   margin-right: 5px;
