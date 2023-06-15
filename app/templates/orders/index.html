@@ -31,7 +31,11 @@
           </span>
         Paid</div>
       {% else %}
+        {% if cust_no is defined %}
+        <a class="button new" href="{{ url_for('orders_pay', order_no=order['order_no'], from_customer=true) }}">
+        {% else %}
         <a class="button new" href="{{ url_for('orders_pay', order_no=order['order_no']) }}">
+        {% endif %}
         <span class="material-icons-outlined md-20 blue mr5">
           paid
           </span>

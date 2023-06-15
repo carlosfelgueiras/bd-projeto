@@ -874,9 +874,22 @@ def orders_pay(order_no):
                 return redirect(url_for("orders_index"))
 
     if request.method == "GET":
-        return render_template(
-            "orders/pay.html", order=order, products=products, total=total[0]
-        )
+        from_customers = request.args.get("from_customer", "")
+        if from_customers == "True":
+            return render_template(
+                "orders/pay.html",
+                order=order,
+                products=products,
+                total=total[0],
+                from_customer=True,
+            )
+        else:
+            return render_template(
+                "orders/pay.html",
+                order=order,
+                products=products,
+                total=total[0],
+            )
 
     if request.method == "POST":
         with pool.connection() as conn:
@@ -896,7 +909,11 @@ def orders_pay(order_no):
                     return redirect(url_for("suppliers_index"))
 
         flash(f"Order {order_no} paid successfully.", "info")
-        return redirect(url_for("orders_index"))
+
+        if request.form["redirect_to_customer"] == "true":
+            return redirect(url_for("customers_orders_index", cust_no=order[1]))
+        else:
+            return redirect(url_for("orders_index"))
 
 
 @app.route("/customers/<cust_no>/orders", methods=("GET",))

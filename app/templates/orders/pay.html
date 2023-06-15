@@ -10,6 +10,12 @@
     <label for="cust_no">By the following client:</label>
     <input name="cust_no" id="cust_no" type="text" value="{{ order['cust_no'] }}" disabled />
     
+    {% if from_customer is defined %}
+    <input name="redirect_to_customer" type="hidden" value="true"/>
+    {% else %}
+    <input name="redirect_to_customer" type="hidden" value="false"/>
+    {% endif %}
+
     <label for="products">Products:</label>
     <pre id="products">
         {% for product in products %}
