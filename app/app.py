@@ -120,7 +120,7 @@ def products_index():
 
                 if count == 0:
                     return render_template(
-                        "products/index.html", products=[], p=1, last_p=1
+                        "products/index.html", products=[], p=1, last_p=1, empty=True
                     )
 
                 if DEFAULT_AMMOUNT * (p - 1) >= count:
@@ -400,7 +400,7 @@ def suppliers_index():
 
                 if count == 0:
                     return render_template(
-                        "suppliers/index.html", suppliers=[], p=1, last_p=1
+                        "suppliers/index.html", suppliers=[], p=1, last_p=1, empty=True
                     )
 
                 if DEFAULT_AMMOUNT * (p - 1) >= count:
@@ -590,7 +590,7 @@ def customers_index():
 
                 if count == 0:
                     return render_template(
-                        "customers/index.html", customers=[], p=1, last_p=1
+                        "customers/index.html", customers=[], p=1, last_p=1, empty=True
                     )
 
                 if DEFAULT_AMMOUNT * (p - 1) >= count:
@@ -796,7 +796,7 @@ def orders_index():
 
                 if count == 0:
                     return render_template(
-                        "orders/index.html", customers=[], p=1, last_p=1
+                        "orders/index.html", customers=[], p=1, last_p=1, empty=True
                     )
 
                 if DEFAULT_AMMOUNT * (p - 1) >= count:
@@ -946,7 +946,12 @@ def customers_orders_index(cust_no):
 
                 if count == 0:
                     return render_template(
-                        "orders/index.html", customers=[], p=1, last_p=1, cust_no=cust_no
+                        "orders/index.html",
+                        customers=[],
+                        p=1,
+                        last_p=1,
+                        cust_no=cust_no,
+                        empty=True,
                     )
 
                 if DEFAULT_AMMOUNT * (p - 1) >= count:
