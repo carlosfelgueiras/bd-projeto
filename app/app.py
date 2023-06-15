@@ -120,7 +120,12 @@ def products_index():
 
                 if count == 0:
                     return render_template(
-                        "products/index.html", products=[], p=1, last_p=1, empty=True
+                        "products/index.html",
+                        page="products",
+                        products=[],
+                        p=1,
+                        last_p=1,
+                        empty=True,
                     )
 
                 if DEFAULT_AMMOUNT * (p - 1) >= count:
@@ -143,6 +148,7 @@ def products_index():
 
     return render_template(
         "products/index.html",
+        page="products",
         products=products,
         p=p,
         last_p=ceil(count / DEFAULT_AMMOUNT),
@@ -152,7 +158,10 @@ def products_index():
 @app.route("/products/new", methods=("GET", "POST"))
 def products_new():
     if request.method == "GET":
-        return render_template("products/new.html")
+        return render_template(
+            "products/new.html",
+            page="products",
+        )
 
     if request.method == "POST":
         # These conditions are enforced in the client side
@@ -227,7 +236,7 @@ def products_edit(sku):
                 return redirect(url_for("products_index"))
 
     if request.method == "GET":
-        return render_template("products/edit.html", product=product)
+        return render_template("products/edit.html", page="products", product=product)
 
     if request.method == "POST":
         if (
@@ -328,6 +337,7 @@ def products_delete(sku):
     if request.method == "GET":
         return render_template(
             "products/delete.html",
+            page="products",
             product=product,
             orders=orders,
             suppliers=suppliers,
@@ -400,7 +410,12 @@ def suppliers_index():
 
                 if count == 0:
                     return render_template(
-                        "suppliers/index.html", suppliers=[], p=1, last_p=1, empty=True
+                        "suppliers/index.html",
+                        page="suppliers",
+                        suppliers=[],
+                        p=1,
+                        last_p=1,
+                        empty=True,
                     )
 
                 if DEFAULT_AMMOUNT * (p - 1) >= count:
@@ -423,6 +438,7 @@ def suppliers_index():
 
     return render_template(
         "suppliers/index.html",
+        page="suppliers",
         suppliers=suppliers,
         p=p,
         last_p=ceil(count / DEFAULT_AMMOUNT),
@@ -432,7 +448,7 @@ def suppliers_index():
 @app.route("/suppliers/new", methods=("GET", "POST"))
 def suppliers_new():
     if request.method == "GET":
-        return render_template("suppliers/new.html")
+        return render_template("suppliers/new.html", page="suppliers")
 
     if request.method == "POST":
         # These conditions are enforced in the client side
@@ -534,6 +550,7 @@ def suppliers_delete(tin):
     if request.method == "GET":
         return render_template(
             "suppliers/delete.html",
+            page="suppliers",
             supplier=supplier,
             deliveries=deliveries,
         )
@@ -590,7 +607,12 @@ def customers_index():
 
                 if count == 0:
                     return render_template(
-                        "customers/index.html", customers=[], p=1, last_p=1, empty=True
+                        "customers/index.html",
+                        page="customers",
+                        customers=[],
+                        p=1,
+                        last_p=1,
+                        empty=True,
                     )
 
                 if DEFAULT_AMMOUNT * (p - 1) >= count:
@@ -613,6 +635,7 @@ def customers_index():
 
     return render_template(
         "customers/index.html",
+        page="customers",
         customers=customers,
         p=p,
         last_p=ceil(count / DEFAULT_AMMOUNT),
@@ -622,7 +645,7 @@ def customers_index():
 @app.route("/customers/new", methods=("GET", "POST"))
 def customers_new():
     if request.method == "GET":
-        return render_template("customers/new.html")
+        return render_template("customers/new.html", page="customers")
 
     if request.method == "POST":
         # These conditions are enforced in the client side
@@ -720,7 +743,7 @@ def customers_delete(cust_no):
 
     if request.method == "GET":
         return render_template(
-            "customers/delete.html", customer=customer, orders=orders
+            "customers/delete.html", page="customers", customer=customer, orders=orders
         )
 
     if request.method == "POST":
@@ -796,7 +819,12 @@ def orders_index():
 
                 if count == 0:
                     return render_template(
-                        "orders/index.html", customers=[], p=1, last_p=1, empty=True
+                        "orders/index.html",
+                        page="orders",
+                        customers=[],
+                        p=1,
+                        last_p=1,
+                        empty=True,
                     )
 
                 if DEFAULT_AMMOUNT * (p - 1) >= count:
@@ -839,6 +867,7 @@ def orders_index():
 
             return render_template(
                 "orders/index.html",
+                page="orders",
                 orders=orders,
                 products=products,
                 sales=sales,
@@ -884,6 +913,7 @@ def orders_pay(order_no):
         if from_customers == "True":
             return render_template(
                 "orders/pay.html",
+                page="customers",
                 order=order,
                 products=products,
                 total=total[0],
@@ -892,6 +922,7 @@ def orders_pay(order_no):
         else:
             return render_template(
                 "orders/pay.html",
+                page="orders",
                 order=order,
                 products=products,
                 total=total[0],
@@ -947,6 +978,7 @@ def customers_orders_index(cust_no):
                 if count == 0:
                     return render_template(
                         "orders/index.html",
+                        page="customers",
                         customers=[],
                         p=1,
                         last_p=1,
@@ -998,6 +1030,7 @@ def customers_orders_index(cust_no):
 
             return render_template(
                 "orders/index.html",
+                page="customers",
                 orders=orders,
                 products=products,
                 sales=sales,
@@ -1036,7 +1069,9 @@ def customers_orders_new(cust_no):
                 return redirect(url_for("customers_index"))
 
     if request.method == "GET":
-        return render_template("orders/new.html", customer=customer, products=products)
+        return render_template(
+            "orders/new.html", page="customers", customer=customer, products=products
+        )
 
     if request.method == "POST":
         for key in request.form:
