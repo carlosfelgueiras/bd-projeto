@@ -192,6 +192,12 @@ def products_new():
             info["description"] = request.form["description"]
 
         if len(request.form["ean"]) > 0:
+            if re.match("^[0-9]{13}$", request.form["ean"]) is None:
+                flash(
+                    "There was an error adding the product. Please try again later.",
+                    "error",
+                )
+                return redirect(url_for("products_index"))
             info["ean"] = request.form["ean"]
 
         with pool.connection() as conn:
