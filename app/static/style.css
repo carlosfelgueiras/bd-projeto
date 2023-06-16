@@ -135,12 +135,17 @@ nav ul li a.active {
 
 .post > header {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   font-size: 0.85em;
 }
 
 .post > header > div:first-of-type {
   flex: auto;
+}
+
+.post > header > div > h1 {
+  word-wrap: break-word;
+  max-width: 760px;
 }
 
 .post > header h1 {
@@ -155,6 +160,7 @@ nav ul li a.active {
 
 .post .body {
   white-space: pre-line;
+  word-wrap: break-word;
 }
 
 .content:last-child {
@@ -178,18 +184,18 @@ nav ul li a.active {
 }
 
 .required:after {
-  content:" *";
-  color:red;
+  content: " *";
+  color: red;
 }
 
 label.required-description {
   color: red;
-  font-size:12px;
+  font-size: 12px;
 }
 
 .required-description:before {
-  content:"* ";
-  color:red;
+  content: "* ";
+  color: red;
 }
 
 .content input,
@@ -329,6 +335,8 @@ textarea:focus {
 .product-list-listing label {
   margin: 0;
   font-weight: 400;
+  max-width: 700px;
+  word-wrap: break-word;
 }
 
 .product-list-listing input {
