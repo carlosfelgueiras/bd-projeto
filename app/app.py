@@ -211,6 +211,7 @@ def products_new():
                     )
                 except psycopg.errors.UniqueViolation:
                     flash("A product with the same SKU already exists.", "warn")
+                    return redirect(url_for("products_index"))
                 except:
                     flash(
                         "There was an error adding the product. Please try again later.",
