@@ -4,12 +4,10 @@ from logging.config import dictConfig
 import psycopg
 from flask import flash
 from flask import Flask
-from flask import jsonify
 from flask import redirect
 from flask import render_template
 from flask import request
 from flask import url_for
-from flask import Response
 from psycopg.rows import namedtuple_row
 from psycopg_pool import ConnectionPool
 from math import ceil
