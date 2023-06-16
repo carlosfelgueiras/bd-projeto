@@ -1129,37 +1129,44 @@ def customers_orders_new(cust_no):
 
         with pool.connection() as conn:
             with conn.cursor(row_factory=namedtuple_row) as cur:
-                order_no = (
+                try:
+                    order_no = (
+                        cur.execute(
+                            """
+                            SELECT MAX(order_no) FROM orders;
+                        """
+                        ).fetchone()[0]
+                        + 1
+                    )
+
                     cur.execute(
                         """
-                        SELECT MAX(order_no) FROM orders;
-                    """
-                    ).fetchone()[0]
-                    + 1
-                )
-
-                cur.execute(
-                    """
-                        INSERT INTO orders VALUES(%(order_no)s, %(cust_no)s, %(date)s)
-                    """,
-                    {
-                        "cust_no": cust_no,
-                        "order_no": order_no,
-                        "date": datetime.date.today().strftime("%Y-%m-%d"),
-                    },
-                )
-
-                for product in contained_products:
-                    cur.execute(
-                        """
-                            INSERT INTO contains VALUES(%(order_no)s, %(sku)s, %(qty)s)
+                            INSERT INTO orders VALUES(%(order_no)s, %(cust_no)s, %(date)s)
                         """,
                         {
+                            "cust_no": cust_no,
                             "order_no": order_no,
-                            "sku": product,
-                            "qty": contained_products[product],
+                            "date": datetime.date.today().strftime("%Y-%m-%d"),
                         },
                     )
+
+                    for product in contained_products:
+                        cur.execute(
+                            """
+                                INSERT INTO contains VALUES(%(order_no)s, %(sku)s, %(qty)s)
+                            """,
+                            {
+                                "order_no": order_no,
+                                "sku": product,
+                                "qty": contained_products[product],
+                            },
+                        )
+                except:
+                    flash(
+                        "There was an error adding the order. Please try again later.",
+                        "error",
+                    )
+                    return redirect(url_for("customers_orders_index", cust_no=cust_no))
 
         flash(f"Order {order_no} added successfully.", "info")
         return redirect(url_for("customers_orders_index", cust_no=cust_no))
