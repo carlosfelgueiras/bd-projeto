@@ -43,7 +43,7 @@ dictConfig(
 
 app = Flask(__name__)
 log = app.logger
-app.secret_key = "teste"
+app.secret_key = "66342083928cc29310851e51d931ea35ebb4b5747bd2a33e0d06c3d6047c83c8"
 
 
 @app.route("/", methods=("GET",))
