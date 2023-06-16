@@ -13,9 +13,9 @@
     <label for="description">Description</label>
     <textarea name="description" id="description" placeholder="Short product description." rows="4"></textarea>
     <label class="required" for="price">Price</label>
-    <input name="price" id="price" type="number" min="0" max="9999999999.99" step="0.01" placeholder="0.00" value="" required/>
+    <input name="price" id="price" type="number" min="0" max="99999999.99" step="0.01" placeholder="0.00" value="" required/>
     <label for="ean">EAN</label>
-    <input name="ean" id="ean" type="text" placeholder="Ex.: 123456789089" value="" pattern="[0-9]{13}" maxlength="13"/>
+    <input name="ean" id="ean" type="text" placeholder="Ex.: 123456789089" value="" pattern="[0-9]{13}" title="Exactly 13 digits" maxlength="13"/>
     <label class="required-description">Required fields</label>    
     <div class="button_holder">
       <input type="submit" class="confirm" value="Create"/>
