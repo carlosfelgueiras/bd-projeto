@@ -277,6 +277,7 @@ def products_edit(sku):
                         "There was an error editing the product. Please try again later.",
                         "error",
                     )
+                    return redirect(url_for("products_index"))
 
         flash(f"Product {sku} edited successfully.", "info")
         return redirect(url_for("products_index"))
@@ -516,11 +517,13 @@ def suppliers_new():
                     )
                 except psycopg.errors.UniqueViolation:
                     flash("A supplier with the same TIN already exists.", "warn")
+                    return redirect(url_for("suppliers_index"))
                 except:
                     flash(
                         "There was an error adding the supplier. Please try again later.",
                         "error",
                     )
+                    return redirect(url_for("suppliers_index"))
 
             flash(f"Supplier {info['tin']} added successfully.", "info")
             return redirect(url_for("suppliers_index"))
