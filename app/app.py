@@ -216,6 +216,7 @@ def products_new():
                         "There was an error adding the product. Please try again later.",
                         "error",
                     )
+                    return redirect(url_for("products_index"))
 
                 flash(f"Product {info['sku']} added successfully.", "info")
                 return redirect(url_for("products_index"))
