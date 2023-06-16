@@ -210,7 +210,7 @@ def products_new():
                     )
                 except psycopg.errors.UniqueViolation:
                     flash("A product with the same SKU already exists.", "warn")
-                    return redirect(url_for("products_index"))
+                    return redirect(url_for("products_new"))
                 except:
                     flash(
                         "There was an error adding the product. Please try again later.",
@@ -459,8 +459,25 @@ def suppliers_index():
 
 @app.route("/suppliers/new", methods=("GET", "POST"))
 def suppliers_new():
+    with pool.connection() as conn:
+        with conn.cursor(row_factory=namedtuple_row) as cur:
+            try:
+                products = cur.execute(
+                    """
+                            SELECT DISTINCT sku FROM product ORDER BY skus;
+                        """
+                ).fetchall()
+            except:
+                flash(
+                    "There was an error adding the supplier. Please try again later.",
+                    "error",
+                )
+                return redirect(url_for("suppliers_index"))
+
     if request.method == "GET":
-        return render_template("suppliers/new.html", page="suppliers")
+        return render_template(
+            "suppliers/new.html", page="suppliers", products=products
+        )
 
     if request.method == "POST":
         # These conditions are enforced in the client side
@@ -516,7 +533,7 @@ def suppliers_new():
                     )
                 except psycopg.errors.UniqueViolation:
                     flash("A supplier with the same TIN already exists.", "warn")
-                    return redirect(url_for("suppliers_index"))
+                    return redirect(url_for("suppliers_new"))
                 except:
                     flash(
                         "There was an error adding the supplier. Please try again later.",
@@ -725,7 +742,7 @@ def customers_new():
                     )
                 except psycopg.errors.UniqueViolation:
                     flash("A customer with the same email already exists.", "warn")
-                    return redirect(url_for("customers_index"))
+                    return redirect(url_for("customers_new"))
                 except:
                     flash(
                         "There was an error adding the customer. Please try again later.",
@@ -1131,7 +1148,7 @@ def customers_orders_new(cust_no):
                 "An order must contain atleast 1 product.",
                 "warn",
             )
-            return redirect(url_for("customers_orders_index", cust_no=cust_no))
+            return redirect(url_for("customers_orders_new", cust_no=cust_no))
 
         with pool.connection() as conn:
             with conn.cursor(row_factory=namedtuple_row) as cur:

@@ -26,8 +26,12 @@
           </span>
         Delete</a>
     </header>
+    {% if supplier['address'] is not none %}
     <p class="body">{{ supplier['address'] }}</p>
+    {% endif %}
+    {% if supplier['date'] is not none %}
     <p class="body"><b>Ends on:</b> {{ supplier['date'] }}</p>
+    {% endif %}
   </article>
 {% if not loop.last %}
 <hr />

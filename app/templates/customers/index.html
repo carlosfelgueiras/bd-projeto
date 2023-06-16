@@ -30,7 +30,9 @@
           </span>
         Delete</a>
     </header>
+    {% if customer['address'] is not none%}
     <p class="body">{{ customer['address'] }}</p>
+    {% endif %}
   </article>
 {% if not loop.last %}
 <hr />

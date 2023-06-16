@@ -14,7 +14,12 @@
     <label for="address">Address</label>
     <input name="address" id="address" type="text" placeholder="Ex.: John Doe Street, 1234-567 City" value="" maxlength="255"/>
     <label class="required" for="sku">SKU</label>
-    <input name="sku" id="sku" type="text" placeholder="Ex.: B1234567" value="" maxlength="25" required />
+    <datalist id="skus">
+      {% for product in products %}
+      <option value="{{ product['sku'] }}" />
+      {% endfor %}
+    </datalist>
+    <input name="sku" id="sku" list="skus" placeholder="Ex.: B1234567" value="" maxlength="25" required />
     <label for="date">Date</label>
     <input name="date" id="date" type="date" value=""/>
     <label class="required-description">Required fields</label>
