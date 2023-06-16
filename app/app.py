@@ -8,6 +8,7 @@ from flask import redirect
 from flask import render_template
 from flask import request
 from flask import url_for
+from flask import jsonify
 from psycopg.rows import namedtuple_row
 from psycopg_pool import ConnectionPool
 from math import ceil
@@ -933,6 +934,11 @@ def orders_pay(order_no):
                     """,
                     (order_no,),
                 ).fetchone()
+
+                if total[0] is None:
+                    total = 0
+                else:
+                    total = total[0]
             except:
                 flash(
                     "There was an error paying the order. Please try again later.",
@@ -948,7 +954,7 @@ def orders_pay(order_no):
                 page="customers",
                 order=order,
                 products=products,
-                total=total[0],
+                total=total,
                 from_customer=True,
             )
         else:
@@ -957,7 +963,7 @@ def orders_pay(order_no):
                 page="orders",
                 order=order,
                 products=products,
-                total=total[0],
+                total=total,
             )
 
     if request.method == "POST":
