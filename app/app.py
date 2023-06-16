@@ -14,6 +14,7 @@ from psycopg.rows import namedtuple_row
 from psycopg_pool import ConnectionPool
 from math import ceil
 import datetime
+import re
 
 
 # postgres://{user}:{password}@{hostname}:{port}/{database-name}
@@ -458,11 +459,12 @@ def suppliers_new():
         if (
             len(request.form["tin"]) == 0
             or len(request.form["tin"]) > 20
+            or re.match("^[A-Z]{2}[0-9]{1,18}$", request.form["tin"]) is None
             or len(request.form["name"]) == 0
             or len(request.form["name"]) > 200
             or len(request.form["address"]) > 255
             or len(request.form["sku"]) == 0
-            or len(request.form["sku"]) > 255
+            or len(request.form["sku"]) > 25
         ):
             flash(
                 "There was an error adding the supplier. Please try again later.",
@@ -486,7 +488,7 @@ def suppliers_new():
 
         if len(request.form["date"]) != 0:
             try:
-                datetime.date.fromisoformat(request.form["address"])
+                datetime.date.fromisoformat(request.form["date"])
             except:
                 flash(
                     "There was an error adding the supplier. Please try again later.",
@@ -662,6 +664,11 @@ def customers_new():
             or len(request.form["email"]) > 254
             or len(request.form["phone"]) > 15
             or len(request.form["address"]) > 255
+            or re.match(
+                "^[a-z0-9][a-z.\-0-9]*@[a-z][a-z.]*[a-z]\.[a-z]{2,3}$",
+                request.form["email"],
+            )
+            is None
         ):
             flash(
                 "There was an error adding the customer. Please try again later.",
@@ -677,6 +684,13 @@ def customers_new():
         }
 
         if len(request.form["phone"]) != 0:
+            if re.match("^[0-9]{9}$", request.form["phone"]) is None:
+                flash(
+                    "There was an error adding the customer. Please try again later.",
+                    "error",
+                )
+                return redirect(url_for("products_index"))
+
             info["phone"] = request.form["phone"]
 
         if len(request.form["address"]) != 0:
@@ -699,11 +713,15 @@ def customers_new():
                         """,
                         info,
                     )
+                except psycopg.errors.UniqueViolation:
+                    flash("A customer with the same email already exists.", "warn")
+                    return redirect(url_for("customers_index"))
                 except:
                     flash(
                         "There was an error adding the customer. Please try again later.",
                         "error",
                     )
+                    return redirect(url_for("customers_index"))
 
                 flash(f"Customer {info['cust_no']} added successfully.", "info")
                 return redirect(url_for("customers_index"))

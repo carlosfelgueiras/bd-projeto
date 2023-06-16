@@ -8,7 +8,7 @@
 {% block content %}
   <form method="post">
     <label class="required" for="tin">TIN</label>
-    <input name="tin" id="tin" type="text" placeholder="Ex.: 122365939" value="" pattern="[0-9]{20}" maxlength="20" required/>
+    <input name="tin" id="tin" type="text" placeholder="Ex.: PT122365939" value="" pattern="^[A-Z]{2}[0-9]{1,18}$" maxlength="20" required/>
     <label class="required" for="name">Name</label>
     <input name="name" id="name" type="text" placeholder="Ex.: John Doe" value="" maxlength="200" required/>
     <label for="address">Address</label>
