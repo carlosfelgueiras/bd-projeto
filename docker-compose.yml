@@ -37,20 +37,6 @@ services:
     networks:
       - app-network
 
-  notebook:
-    image: bdist/db-notebook:8.0
-    restart: always
-    volumes:
-      - ./app:/home/jovyan/app
-      - ./data:/home/jovyan/data
-      - ./work:/home/jovyan/work
-    depends_on:
-      - postgres
-    ports:
-      - "8888:8888"
-    networks:
-      - app-network
-
   app:
     build:
       context: ./app

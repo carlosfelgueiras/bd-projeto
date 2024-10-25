@@ -17,7 +17,7 @@ import re
 
 
 # postgres://{user}:{password}@{hostname}:{port}/{database-name}
-DATABASE_URL = "postgres://db:db@postgres/db"
+DATABASE_URL = "postgres://postgres:postgres@postgres/postgres"
 
 pool = ConnectionPool(conninfo=DATABASE_URL)
 # the pool starts connecting immediately.
